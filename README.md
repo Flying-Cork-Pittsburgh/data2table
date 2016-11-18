@@ -8,3 +8,6 @@ Wordpress content pages out of these custom database table values.
 
 ## Features
 You find a [list of features here] (https://github.com/anjakammer/data2table/labels/Feature)
+
+## Ressources and Libraries
+- [Wordpress Plugin Boilerplate] (http://wppb.io/)
