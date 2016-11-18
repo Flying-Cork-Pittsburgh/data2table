@@ -10,7 +10,7 @@
  *
  * @link              http://example.com
  * @since             1.0.0
- * @package           Plugin_Name
+ * @package           D2T
  *
  * @wordpress-plugin
  * Plugin Name:       WordPress Plugin Boilerplate
@@ -34,22 +34,22 @@ if ( ! defined( 'WPINC' ) ) {
  * The code that runs during plugin activation.
  * This action is documented in includes/class-d2t-activator.php
  */
-function activate_plugin_name() {
+function activate_d2t() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-d2t-activator.php';
-	Plugin_Name_Activator::activate();
+	D2T_Activator::activate();
 }
 
 /**
  * The code that runs during plugin deactivation.
  * This action is documented in includes/class-d2t-deactivator.php
  */
-function deactivate_plugin_name() {
+function deactivate_d2t() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-d2t-deactivator.php';
-	Plugin_Name_Deactivator::deactivate();
+	D2T_Deactivator::deactivate();
 }
 
-register_activation_hook( __FILE__, 'activate_plugin_name' );
-register_deactivation_hook( __FILE__, 'deactivate_plugin_name' );
+register_activation_hook( __FILE__, 'activate_d2t' );
+register_deactivation_hook( __FILE__, 'deactivate_d2t' );
 
 /**
  * The core plugin class that is used to define internationalization,
@@ -66,10 +66,10 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-d2t.php';
  *
  * @since    1.0.0
  */
-function run_plugin_name() {
+function run_d2t() {
 
-	$plugin = new Plugin_Name();
+	$plugin = new D2T();
 	$plugin->run();
 
 }
-run_plugin_name();
+run_d2t();
