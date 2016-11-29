@@ -3,11 +3,11 @@
 /**
  * The admin-specific functionality of the plugin.
  *
- * @link       http://example.com
+ * @link       https://github.com/anjakammer/data2table
  * @since      1.0.0
  *
- * @package    data2table
- * @subpackage data2table/admin
+ * @package    d2t
+ * @subpackage d2t/admin
  */
 
 /**
@@ -16,9 +16,9 @@
  * Defines the plugin name, version, and two examples hooks for how to
  * enqueue the admin-specific stylesheet and JavaScript.
  *
- * @package    data2table
- * @subpackage data2table/admin
- * @author     Your Name <email@example.com>
+ * @package    d2t
+ * @subpackage d2t/admin
+ * @author     Martin Boy & Anja Kammer
  */
 class D2T_Admin {
 
@@ -40,6 +40,15 @@ class D2T_Admin {
 	 */
 	private $version;
 
+    /**
+     * The name of this plugin.
+     *
+     * @since    1.0.0
+     * @access   private
+     * @var      string    $name    The current version of this plugin.
+     */
+    private $name;
+
 	/**
 	 * Initialize the class and set its properties.
 	 *
@@ -47,12 +56,12 @@ class D2T_Admin {
 	 * @param      string    $d2t       The name of this plugin.
 	 * @param      string    $version    The version of this plugin.
 	 */
-	public function __construct( $d2t, $version ) {
+	public function __construct( $d2t, $version, $name ) {
 
 		$this->d2t = $d2t;
 		$this->version = $version;
-
-	}
+        $this->name = $name;
+    }
 
 	/**
 	 * Register the stylesheets for the admin area.

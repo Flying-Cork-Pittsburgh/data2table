@@ -3,11 +3,11 @@
 /**
  * Register all actions and filters for the plugin
  *
- * @link       http://example.com
+ * @link       https://github.com/anjakammer/data2table
  * @since      1.0.0
  *
- * @package    data2table
- * @subpackage data2table/includes
+ * @package    d2t
+ * @subpackage d2t/includes
  */
 
 /**
@@ -17,9 +17,9 @@
  * the plugin, and register them with the WordPress API. Call the
  * run function to execute the list of actions and filters.
  *
- * @package    data2table
- * @subpackage data2table/includes
- * @author     Your Name <email@example.com>
+ * @package    d2t
+ * @subpackage d2t/includes
+ * @author     Martin Boy & Anja Kammer
  */
 class D2T_Loader {
 
@@ -41,19 +41,41 @@ class D2T_Loader {
 	 */
 	protected $filters;
 
+    /**
+     * The ID of this plugin.
+     *
+     * @since    1.0.0
+     * @access   private
+     * @var      string    $d2t    The ID of this plugin.
+     */
+    private $d2t;
+
+    /**
+     * The name of this plugin.
+     *
+     * @since    1.0.0
+     * @access   private
+     * @var      string    $name    The current version of this plugin.
+     */
+    private $name;
+
 	/**
 	 * Initialize the collections used to maintain the actions and filters.
 	 *
 	 * @since    1.0.0
 	 */
-	public function __construct() {
+	public function __construct($d2t, $name) {
 
 		$this->actions = array();
 		$this->filters = array();
 
+        $this->d2t = $d2t;
+        $this->name = $name;
+
+
 	}
 
-	/**
+    /**
 	 * Add a new action to the collection to be registered with WordPress.
 	 *
 	 * @since    1.0.0

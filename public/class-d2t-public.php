@@ -3,11 +3,11 @@
 /**
  * The public-facing functionality of the plugin.
  *
- * @link       http://example.com
+ * @link       https://github.com/anjakammer/data2table
  * @since      1.0.0
  *
- * @package    data2table
- * @subpackage data2table/public
+ * @package    d2t
+ * @subpackage d2t/public
  */
 
 /**
@@ -16,9 +16,9 @@
  * Defines the plugin name, version, and two examples hooks for how to
  * enqueue the admin-specific stylesheet and JavaScript.
  *
- * @package    data2table
- * @subpackage data2table/public
- * @author     Your Name <email@example.com>
+ * @package    d2t
+ * @subpackage d2t/public
+ * @author     Martin Boy & Anja Kammer
  */
 class D2T_Public {
 

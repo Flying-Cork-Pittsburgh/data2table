@@ -3,11 +3,11 @@
 /**
  * Fired during plugin deactivation
  *
- * @link       http://example.com
+ * @link       https://github.com/anjakammer/data2table
  * @since      1.0.0
  *
- * @package    data2table
- * @subpackage data2table/includes
+ * @package    d2t
+ * @subpackage d2t/includes
  */
 
 /**
@@ -16,9 +16,9 @@
  * This class defines all code necessary to run during the plugin's deactivation.
  *
  * @since      1.0.0
- * @package    data2table
- * @subpackage data2table/includes
- * @author     Your Name <email@example.com>
+ * @package    d2t
+ * @subpackage d2t/includes
+ * @author     Martin Boy & Anja Kammer
  */
 class D2T_Deactivator {
 

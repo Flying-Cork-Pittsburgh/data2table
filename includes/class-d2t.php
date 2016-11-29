@@ -6,11 +6,11 @@
  * A class definition that includes attributes and functions used across both the
  * public-facing side of the site and the admin area.
  *
- * @link       http://example.com
+ * @link       https://github.com/anjakammer/data2table
  * @since      1.0.0
  *
- * @package    data2table
- * @subpackage data2table/includes
+ * @package    d2t
+ * @subpackage d2t/includes
  */
 
 /**
@@ -23,9 +23,9 @@
  * version of the plugin.
  *
  * @since      1.0.0
- * @package    data2table
- * @subpackage data2table/includes
- * @author     Your Name <email@example.com>
+ * @package    d2t
+ * @subpackage d2t/includes
+ * @author     Martin Boy & Anja Kammer
  */
 class D2T {
 
@@ -57,6 +57,15 @@ class D2T {
 	 */
 	protected $version;
 
+    /**
+     * The name of the plugin.
+     *
+     * @since    1.0.0
+     * @access   protected
+     * @var      string    $name    The name of the plugin.
+     */
+    protected $name;
+
 	/**
 	 * Define the core functionality of the plugin.
 	 *
@@ -70,6 +79,7 @@ class D2T {
 
 		$this->d2t = 'd2t';
 		$this->version = '1.0.0';
+        $this->name = 'Data2Table';
 
 		$this->load_dependencies();
 		$this->set_locale();
@@ -119,7 +129,7 @@ class D2T {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-d2t-public.php';
 
-		$this->loader = new D2T_Loader();
+		$this->loader = new D2T_Loader($this->get_d2t(), $this->get_name());
 
 	}
 
@@ -137,7 +147,6 @@ class D2T {
 		$plugin_i18n = new D2T_i18n();
 
 		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
-
 	}
 
 	/**
@@ -149,12 +158,12 @@ class D2T {
 	 */
 	private function define_admin_hooks() {
 
-		$plugin_admin = new D2T_Admin( $this->get_d2t(), $this->get_version() );
+		$plugin_admin = new D2T_Admin( $this->get_d2t(), $this->get_version(), $this->get_name() );
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
-
-	}
+        // TODO load filters and actions here
+    }
 
 	/**
 	 * Register all of the hooks related to the public-facing functionality
@@ -169,7 +178,9 @@ class D2T {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-
+        // TODO load filters and actions here
+        // load plugin entry for wordpress admin menu
+        $this->loader->add_action('admin_menu', $this, 'd2t_admin_menu');
 	}
 
 	/**
@@ -212,4 +223,27 @@ class D2T {
 		return $this->version;
 	}
 
+    /**
+     * Retrieve the name of the plugin.
+     *
+     * @since     1.0.0
+     * @return    string    The name of the plugin.
+     */
+    public function get_name() {
+        return $this->name;
+    }
+
+    public function d2t_admin_menu(){
+        add_menu_page(
+            $this->name,                         // page title
+            $this->name,                         // menu title
+            // Change the capability to make the pages visible for other users
+            'manage_database',                // capability
+            $this->d2t,                         // menu slug
+            function(){
+                require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/d2t-admin-display.php';},              // callback function
+            'dashicons-list-view',
+            '3.5'                           // better decimal to avoid overwriting
+        );
+    }
 }

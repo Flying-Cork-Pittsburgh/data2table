@@ -8,19 +8,17 @@
  * registers the activation and deactivation functions, and defines a function
  * that starts the plugin.
  *
- * @link              http://example.com
+ * @link              https://github.com/anjakammer/data2table
  * @since             1.0.0
  * @package           D2T
  *
  * @wordpress-plugin
- * Plugin Name:       WordPress Plugin Boilerplate
- * Plugin URI:        http://example.com/d2t-uri/
- * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
+ * Plugin Name:       Data2Table
+ * Plugin URI:        https://github.com/anjakammer/data2table/
+ * Description:       A Wordpress-Plugin for creating database tables and handling CRUD operations
  * Version:           1.0.0
- * Author:            Your Name or Your Company
- * Author URI:        http://example.com/
- * License:           GPL-2.0+
- * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
+ * Author:            Martin Boy & Anja Kammer
+ * Author URI:        https://github.com/anjakammer/data2table/
  * Text Domain:       d2t
  * Domain Path:       /languages
  */
@@ -70,6 +68,5 @@ function run_d2t() {
 
 	$plugin = new D2T();
 	$plugin->run();
-
 }
 run_d2t();
