@@ -108,7 +108,9 @@ class D2T_Admin {
 		 */
 
 		wp_enqueue_style( $this->d2t, plugin_dir_url( __FILE__ ) . 'css/d2t-admin.css', array(), $this->version, 'all' );
-
+		// Bootstrap
+		wp_register_style('prefix_bootstrap', plugin_dir_url( __FILE__ ) . 'css/bootstrap.min.css');
+		wp_enqueue_style('prefix_bootstrap');
 	}
 
 	/**
@@ -131,7 +133,9 @@ class D2T_Admin {
 		 */
 
 		wp_enqueue_script( $this->d2t, plugin_dir_url( __FILE__ ) . 'js/d2t-admin.js', array( 'jquery' ), $this->version, false );
-
+		// Bootstrap
+		wp_register_script('prefix_bootstrap', plugin_dir_url( __FILE__ ) . 'js/bootstrap.min.js');
+		wp_enqueue_script('prefix_bootstrap');
 	}
 
 }
