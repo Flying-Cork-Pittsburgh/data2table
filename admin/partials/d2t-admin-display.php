@@ -5,6 +5,9 @@
  *
  * This file is used to markup the admin-facing aspects of the plugin.
  *
+ * Template : Plugin Admin Page
+ * URL: `/wp-admin/admin.php?page=d2t`
+ *
  * @link       https://github.com/anjakammer/data2table
  * @since      1.0.0
  *
@@ -12,6 +15,7 @@
  * @subpackage d2t/admin/partials
  */
 
+echo $this->say_hey("mööp");
 
 if ( !current_user_can( 'manage_database' ) )  {
 wp_die( __( 'You do not have sufficient permissions to access this page.' ) );

@@ -30,12 +30,12 @@
 class D2T {
 
 	/**
-	 * The loader that's responsible for maintaining and registering all hooks that power
+	 * The loader is responsible for maintaining and registering all hooks that power
 	 * the plugin.
 	 *
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      D2T_Loader    $loader    Maintains and registers all hooks for the plugin.
+	 * @var      D2T_Loader $loader Maintains and registers all hooks for the plugin.
 	 */
 	protected $loader;
 
@@ -44,7 +44,7 @@ class D2T {
 	 *
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      string    $d2t    The string used to uniquely identify this plugin.
+	 * @var      string $d2t The string used to uniquely identify this plugin.
 	 */
 	protected $d2t;
 
@@ -53,18 +53,18 @@ class D2T {
 	 *
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      string    $version    The current version of the plugin.
+	 * @var      string $version The current version of the plugin.
 	 */
 	protected $version;
 
-    /**
-     * The name of the plugin.
-     *
-     * @since    1.0.0
-     * @access   protected
-     * @var      string    $name    The name of the plugin.
-     */
-    protected $name;
+	/**
+	 * The name of the plugin.
+	 *
+	 * @since    1.0.0
+	 * @access   protected
+	 * @var      string $name The name of the plugin.
+	 */
+	protected $name;
 
 	/**
 	 * Define the core functionality of the plugin.
@@ -77,15 +77,14 @@ class D2T {
 	 */
 	public function __construct() {
 
-		$this->d2t = 'd2t';
+		$this->d2t     = 'd2t';
 		$this->version = '1.0.0';
-        $this->name = 'Data2Table';
+		$this->name    = 'Data2Table';
 
 		$this->load_dependencies();
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
-
 	}
 
 	/**
@@ -105,6 +104,9 @@ class D2T {
 	 * @access   private
 	 */
 	private function load_dependencies() {
+
+		global $wpdb;
+		$this->wpdb = $wpdb;
 
 		/**
 		 * The class responsible for orchestrating the actions and filters of the
@@ -129,7 +131,7 @@ class D2T {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-d2t-public.php';
 
-		$this->loader = new D2T_Loader($this->get_d2t(), $this->get_name());
+		$this->loader = new D2T_Loader( $this->get_d2t(), $this->get_version(), $this->get_name());
 
 	}
 
@@ -158,12 +160,14 @@ class D2T {
 	 */
 	private function define_admin_hooks() {
 
-		$plugin_admin = new D2T_Admin( $this->get_d2t(), $this->get_version(), $this->get_name() );
+		$plugin_admin = new D2T_Admin( $this->get_d2t(), $this->get_version(), $this->get_name());
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
-        // TODO load filters and actions here
-    }
+		// TODO load filters and actions here
+		// load plugin entry for wordpress admin menu
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'd2t_admin_menu' );
+	}
 
 	/**
 	 * Register all of the hooks related to the public-facing functionality
@@ -178,9 +182,8 @@ class D2T {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-        // TODO load filters and actions here
-        // load plugin entry for wordpress admin menu
-        $this->loader->add_action('admin_menu', $this, 'd2t_admin_menu');
+		// TODO load filters and actions here
+
 	}
 
 	/**
@@ -223,27 +226,13 @@ class D2T {
 		return $this->version;
 	}
 
-    /**
-     * Retrieve the name of the plugin.
-     *
-     * @since     1.0.0
-     * @return    string    The name of the plugin.
-     */
-    public function get_name() {
-        return $this->name;
-    }
-
-    public function d2t_admin_menu(){
-        add_menu_page(
-            $this->name,                         // page title
-            $this->name,                         // menu title
-            // Change the capability to make the pages visible for other users
-            'manage_database',                // capability
-            $this->d2t,                         // menu slug
-            function(){
-                require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/d2t-admin-display.php';},              // callback function
-            'dashicons-list-view',
-            '3.5'                           // better decimal to avoid overwriting
-        );
-    }
+	/**
+	 * Retrieve the name of the plugin.
+	 *
+	 * @since     1.0.0
+	 * @return    string    The name of the plugin.
+	 */
+	public function get_name() {
+		return $this->name;
+	}
 }

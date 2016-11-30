@@ -63,6 +63,31 @@ class D2T_Admin {
         $this->name = $name;
     }
 
+    public function say_hey($to){
+	    return "Hey " . $to . "!";
+    }
+
+	/**
+	 * Register the menu entry for the admin area.
+	 *
+	 * @since    1.0.0
+	 */
+	public function d2t_admin_menu(){
+		add_menu_page(
+			$this->name,                         // page title
+			$this->name,                         // menu title
+			// Change the capability to make the pages visible for other users
+			'manage_database',                // capability
+			$this->d2t,                         // menu slug
+			function(){
+				require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/d2t-admin-display.php';
+
+			},              // callback function
+			'dashicons-list-view',
+			'3.5'                           // better decimal to avoid overwriting
+		);
+	}
+
 	/**
 	 * Register the stylesheets for the admin area.
 	 *
