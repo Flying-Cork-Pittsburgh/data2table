@@ -29,4 +29,35 @@
 	 * practising this, we should strive to set a better example in our own work.
 	 */
 
+
+//Ajax Request handling
+	$( document ).on( 'click', '#submit-sql-statement', function(event) {
+		event.preventDefault();
+		var submit_button = $('#submit-sql-statement');
+		$.ajax({
+			url: ajaxurl,  // this is part of the JS object you pass in from wp_localize_scripts.
+			type: 'get',        // 'get' or 'post', override for form's 'method' attribute
+			dataType: 'json',
+			data : {
+				action : 'd2t_run_sql_statement',
+				sql : $( "#sql_statement").val()
+			},
+			beforeSend: function() {
+				submit_button.html( 'Loading data...' );
+			},
+			// use beforeSubmit to add your nonce to the form data before submitting.
+			beforeSubmit: function (arr, $form, options) {
+				arr.push({"name": "nonce", "value": d2t_run_sql_statement.nonce});
+			},
+			success: function (result) {
+				submit_button.html( 'Run' );
+                //TODO render success message
+			},
+			error:function () {
+				submit_button.html( 'SQL Error' );
+			}
+		});
+
+	})
 })( jQuery );
+

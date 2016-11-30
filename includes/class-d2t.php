@@ -164,6 +164,7 @@ class D2T {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_ajax_sql_submission' );
 		// TODO load filters and actions here
 		// load plugin entry for wordpress admin menu
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'd2t_admin_menu' );

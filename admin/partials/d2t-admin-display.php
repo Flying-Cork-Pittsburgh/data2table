@@ -15,8 +15,6 @@
  * @subpackage d2t/admin/partials
  */
 
-echo $this->say_hey( "mööp" );
-
 if ( ! current_user_can( 'manage_database' ) ) {
 	wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 }
@@ -29,13 +27,13 @@ if ( ! current_user_can( 'manage_database' ) ) {
 	</div>
 	<form method="post"
 	      action="<?php echo admin_url( 'admin.php?page=' . plugin_basename( __FILE__ ) ); ?>">
-		<?php wp_nonce_field( 'd2t_create_table' ); ?>
+		<?php wp_nonce_field( 'd2t_run_sql_statement' ); ?>
 		<div class="form-group">
-			<textarea rows="10" name="sql_statement" class="form-control" dir="ltr"></textarea>
+			<textarea rows="10" name="sql_statement" class="form-control" dir="ltr" placeholder="CREATE TABLE table_name ..."></textarea>
 		</div>
 		<div class="form-group">
 			<div class="btn-group" role="group" aria-label="...">
-				<input type="submit" class="btn btn-primary btn-lg" name="create_table"
+				<input type="submit" id="submit-sql-statement" class="btn btn-primary btn-lg" name="create_table"
 				       value="<?php _e( 'Run', 'd2t' ); ?>"/>
 				<input type="button" class="btn btn-default btn-lg" name="cancel"
 				       value="<?php _e( 'Cancel', 'd2t' ); ?>"/>
