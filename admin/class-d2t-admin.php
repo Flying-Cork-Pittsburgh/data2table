@@ -103,10 +103,7 @@ class D2T_Admin {
 	 *
 	 * @return String
 	 */
-	public
-	function get_table_name_from_sql(
-		$sql
-	) {
+	public function get_table_name_from_sql( $sql ) {
 		if ( preg_match( '/(?i)create table if not exists\s+(?<tableName>[^\s]+)/', $sql ) ) {
 			preg_match( '/(?i)create table if not exists\s+(?<tableName>[^\s]+)/', $sql, $result );
 		} else {
@@ -125,10 +122,7 @@ class D2T_Admin {
 	 *
 	 * @return boolean
 	 */
-	public
-	function create_table(
-		$sql = null
-	) {
+	public function create_table( $sql = null ) {
 		global $wpdb;
 
 		if ( $this->sql_statement_is_valid( $sql ) ) {
@@ -146,19 +140,19 @@ class D2T_Admin {
 		}
 	}
 
-	public function ajax_create_table(){
+	public function ajax_create_table() {
 
-		// TODO get data from post request
 		// get form data
-		$query_vars = json_decode( stripslashes( $_POST['query_vars'] ), true );
-		$sql= ($_GET['sql_statement']);
+		$sql = ($_POST['sql']);
 
-		$this->create_table($sql);
-		echo json_encode("geklappt");
+		if($this->create_table( $sql )){
+			echo json_encode( "geklappt" );
 
+		}else{
+			echo json_encode( "fail" );
+		}
 
 		die();
-
 	}
 
 	/**
@@ -170,16 +164,13 @@ class D2T_Admin {
 	 *
 	 * @return boolean
 	 */
-	public
-	function check_table_exists(
-		$table_name = null
-	) {
+	public function check_table_exists( $table_name = null ) {
 		global $wpdb;
-		if ( ! empty( $table_name ) ) {
+		if ( empty( $table_name ) ) {
 			error_log( __( 'Table name is empty.', $this->d2t ), 0, plugin_dir_path( __FILE__ ) );
-
 			return false;
 		}
+		
 		$result = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $table_name ) );
 
 		return $table_name === $result;
@@ -190,8 +181,7 @@ class D2T_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-	public
-	function d2t_admin_menu() {
+	public function d2t_admin_menu() {
 		add_menu_page(
 			$this->name,                         // page title
 			$this->name,                         // menu title
@@ -212,8 +202,7 @@ class D2T_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-	public
-	function enqueue_styles() {
+	public function enqueue_styles() {
 
 		/**
 		 * This function is provided for demonstration purposes only.
@@ -238,8 +227,7 @@ class D2T_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-	public
-	function enqueue_scripts() {
+	public function enqueue_scripts() {
 
 		/**
 		 * This function is provided for demonstration purposes only.
@@ -259,13 +247,14 @@ class D2T_Admin {
 		wp_enqueue_script( 'prefix_bootstrap' );
 	}
 
-	public
-	function enqueue_ajax_sql_submission() {
+	public function enqueue_ajax_sql_submission() {
 		global $wp_query;
 		wp_localize_script( 'd2t-admin', 'd2t_run_sql_statement',
 			array(
-				'ajaxurl'    => admin_url( 'admin-ajax.php' ), //url for php file that process ajax request to WP
-				'nonce'      => wp_create_nonce( "d2t_run_sql_statement" ),// this is a unique token to prevent form hijacking
+				'ajaxurl'    => admin_url( 'admin-ajax.php' ),
+				//url for php file that process ajax request to WP
+				'nonce'      => wp_create_nonce( "d2t_run_sql_statement" ),
+				// this is a unique token to prevent form hijacking
 				'query_vars' => json_encode( $wp_query->query )
 			)
 		);
