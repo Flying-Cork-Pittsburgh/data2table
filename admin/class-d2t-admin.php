@@ -49,6 +49,14 @@ class D2T_Admin {
 	 */
 	private $name;
 
+	/**
+	 * The DB Handler is responsible for handling database request and validation.
+	 *
+	 * @since    1.0.0
+	 * @access   protected
+	 * @var      D2T_DbHandler $db handles all database requests and validation
+	 */
+	protected $db;
 
 	/**
 	 * Initialize the class and set its properties.
@@ -63,117 +71,32 @@ class D2T_Admin {
 		$this->d2t     = $d2t;
 		$this->version = $version;
 		$this->name    = $name;
+
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/utils/class-d2t-DbHandler.php';
+		$this->db = new D2T_DbHandler();
+
 	}
 
 	/**
-	 * validate sql statement
+	 * handles ajax request: create table
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $sql SQL statement for validation
-	 *
-	 * @return boolean
 	 */
-	public function sql_statement_is_valid( $sql = null ) {
-		// TODO please to refactoring
-		$message = '';
-		if ( ! empty( $sql ) ) {
-
-			if ( $this->check_table_exists( $this->get_table_name_from_sql( $sql ) ) ) {
-				$message = __( 'Can not create a table because the table name already exists.', $this->d2t );
-				error_log( $message, 0, plugin_dir_path( __FILE__ ) );
-
-				return false;
-			} else {
-
-				return true;
-			}
-		} else {
-
-			return false;
-		}
-	}
-
-	/**
-	 * gets table name from sql statement
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string $sql SQL statement
-	 *
-	 * @return String
-	 */
-	public function get_table_name_from_sql( $sql ) {
-		if ( preg_match( '/(?i)create table if not exists\s+(?<tableName>[^\s]+)/', $sql ) ) {
-			preg_match( '/(?i)create table if not exists\s+(?<tableName>[^\s]+)/', $sql, $result );
-		} else {
-			preg_match( '/(?i)create table\s+(?<tableName>[^\s]+)/', $sql, $result );
-		}
-
-		return $result['tableName'];
-	}
-
-	/**
-	 * Create table on the database
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string $sql Valid SQL statement for creating a new table
-	 *
-	 * @return boolean
-	 */
-	public function create_table( $sql = null ) {
-		global $wpdb;
-
-		if ( $this->sql_statement_is_valid( $sql ) ) {
-
-			//https://codex.wordpress.org/Creating_Tables_with_Plugins#Creating_or_Updating_the_Table
-			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-			dbDelta( $sql );
-			$wpdb->flush();
-
-			return ( $this->check_table_exists( $this->get_table_name_from_sql( $sql ) ) );
-		} else {
-			error_log( __( 'Failed to create table.', $this->d2t ), 0, plugin_dir_path( __FILE__ ) );
-
-			return false;
-		}
-	}
-
 	public function ajax_create_table() {
+		// TODO refactor to generic ajax method
+		// call_user_func oder __invoke method in class
 
 		// get form data
-		$sql = ($_POST['sql']);
+		$sql = ( $_POST['sql'] );
 
-		if($this->create_table( $sql )){
-			echo json_encode( "geklappt" );
-
-		}else{
-			echo json_encode( "fail" );
+		if ( $this->db->create_table( $sql ) ) {
+			echo json_encode(  __( 'Table successfully created', $this->d2t ) );
+		} else {
+			echo json_encode(  __( 'Failed to create table.', $this->d2t ) );
 		}
 
 		die();
-	}
-
-	/**
-	 * Check whether table already exist in dab
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string $table_name [require]
-	 *
-	 * @return boolean
-	 */
-	public function check_table_exists( $table_name = null ) {
-		global $wpdb;
-		if ( empty( $table_name ) ) {
-			error_log( __( 'Table name is empty.', $this->d2t ), 0, plugin_dir_path( __FILE__ ) );
-			return false;
-		}
-		
-		$result = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $table_name ) );
-
-		return $table_name === $result;
 	}
 
 	/**
