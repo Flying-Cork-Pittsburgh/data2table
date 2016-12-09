@@ -10,7 +10,7 @@
  */
 
 /**
- * Database Handler file to wrap the Wordpress wpdb functions
+ * Database Handler to wrap the Wordpress wpdb functions
  *
  * Provides functions to handle and validate database requests
  *
@@ -19,6 +19,25 @@
  * @author     Martin Boy & Anja Kammer
  */
 class D2T_DbHandler {
+
+	/**
+	 * Database variable of default setting for table name case
+	 * http://dev.mysql.com/doc/refman/5.7/en/server-system-variables.html#sysvar_lower_case_table_names
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      string $is_lower_case_table_names boolean whether db var is true or false
+	 */
+	private $is_lower_case_table_names;
+
+	public function __construct() {
+		global $wpdb;
+		// Value of Database var: `lower_case_table_names`)
+		$this->db_is_lower_case = boolval( array_column(
+			$wpdb->get_results( "SHOW VARIABLES WHERE variable_name = 'lower_case_table_names';",
+				'ARRAY_A' ), 'Value' ) );
+
+	}
 
 	/**
 	 * Create table on the database
@@ -44,6 +63,7 @@ class D2T_DbHandler {
 			}
 		}
 		error_log( __( 'Failed to create table.', $this->d2t ), 0, plugin_dir_path( __FILE__ ) );
+
 		return false;
 	}
 
@@ -57,19 +77,21 @@ class D2T_DbHandler {
 	 * @return boolean
 	 */
 	public function sql_statement_is_valid( $sql = null ) {
-		// TODO please do more validation
 		$message = '';
 
-		if ( $this->check_table_exists( $this->get_table_name_from_sql( $sql ) ) ) {
-			$message = __( 'Can not create a table because the table name already exists.', $this->d2t );
+		if ( preg_match( '/(?i)(create table)( if exists)?/', $sql )  // it should be a "create table" statement
+		     &&
+		     ! $this->check_table_exists( $this->get_table_name_from_sql( $sql ) )
+		) {
+
+			return true;
+		} else {
+			$message = __( 'Can not create a table because the table name already exists, or it is no valid statement.',
+				$this->d2t );
 			error_log( $message, 0, plugin_dir_path( __FILE__ ) );
 
 			return false;
-		} else {
-
-			return true;
 		}
-
 	}
 
 	/**
@@ -82,10 +104,7 @@ class D2T_DbHandler {
 	 * @return String
 	 */
 	public function get_table_name_from_sql( $sql ) {
-		preg_match( '/(?i)create table if not exists\s+(?<tableName>[^\s]+)/', $sql, $result );
-		if ( count( $result ) === 0 ) {
-			preg_match( '/(?i)create table\s+(?<tableName>[^\s]+)/', $sql, $result );
-		}
+		preg_match( '/(?i)(create table)( if exists)?\s(?<tableName>[^\s]+)/', $sql, $result );
 
 		return $result['tableName'];
 	}
@@ -101,14 +120,16 @@ class D2T_DbHandler {
 	 */
 	public function check_table_exists( $table_name = null ) {
 		global $wpdb;
+
 		if ( empty( $table_name ) ) {
 			error_log( __( 'Table name is empty.', $this->d2t ), 0, plugin_dir_path( __FILE__ ) );
 
 			return false;
 		}
-		// TODO get mysql setting lower_table_nam 1/0
-		$result = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", strtolower( $table_name ) ) );
 
-		return $table_name === $result;
+		$table_name = $this->is_lower_case_table_names ? strtolower( $table_name ) : $table_name;
+		$result     = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", strtolower( $table_name ) ) );
+
+		return strcmp( $table_name, $result );
 	}
 }
