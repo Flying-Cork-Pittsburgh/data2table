@@ -2,3 +2,50 @@
  * All of the CSS for your admin-specific functionality should be
  * included in this file.
  */
+
+ul.tabs {
+    margin: 0;
+    padding: 0;
+    list-style: none; }
+
+ul.tabs li {
+    background-color: #4d7991;
+    color: #dedede;
+    display: inline-block;
+    padding: 10px 15px;
+    margin-bottom: 0;
+    cursor: pointer;
+    text-align: center;
+    margin-right: 5px;
+    width: 200px; }
+
+.tab-content.current {
+    border-top: 5px solid #00a0d2; }
+
+ul.tabs li.current {
+    background: #00a0d2;
+    color: #ffffff; }
+
+ul.tabs li:hover {
+    text-shadow: 1px 1px #003343; }
+
+.tab-content {
+    display: none;
+    background: #FFF;
+    padding: 15px; }
+
+.tab-content.current {
+    display: inherit; }
+
+.form-table td {
+    padding-right: 30px;
+    padding-bottom: 0; }
+
+.info {
+    display: block;
+    padding: 15px;
+    border: 1px solid rgba(255, 253, 124, 0.8);
+    background: rgba(255, 253, 124, 0.5); }
+
+p.info {
+    padding: 5px 15px; }

@@ -112,7 +112,7 @@ class D2T_Admin {
 			'manage_database',                // capability
 			$this->d2t,                         // menu slug
 			function () {
-				require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/d2t-admin-display.php';
+				require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/views/d2t-admin-display.php';
 
 			},              // callback function
 			'dashicons-list-view',

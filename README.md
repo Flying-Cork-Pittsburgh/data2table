@@ -11,3 +11,4 @@ You find a [list of features here] (https://github.com/anjakammer/data2table/lab
 
 ## Ressources and Libraries
 - [Wordpress Plugin Boilerplate] (http://wppb.io/)
+- [Library for displaying data tables] (http://js-grid.com/)
