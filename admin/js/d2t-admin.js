@@ -21,6 +21,16 @@
         $("#" + tab_id).addClass('current');
     });
 
+    // show field for setting default value
+    $(document).on('change', '.field_default_type', function () {
+        var value_field = $('#field_default_value_'+ $(this).data('column'));
+        if($(this).val() == 'USER_DEFINED'){
+            value_field.show();
+        }else {
+            value_field.hide();
+        }
+    });
+
 
     //Ajax Request handling
     $(document).on('click', '#submit-sql-statement', function (event) {

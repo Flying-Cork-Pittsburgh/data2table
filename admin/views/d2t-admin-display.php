@@ -27,32 +27,43 @@ if ( ! current_user_can( 'manage_database' ) ) {
 <div class="wrap">
 
 	<ul class="tabs">
-		<li class="tab-link current" data-tab="tab-gui"><?php _e( 'Click \'n\' Create', 'd2t' ); ?></li>
+		<li class="tab-link current" data-tab="tab-gui"><?php _e( 'Create Table', 'd2t' ); ?></li>
 		<li class="tab-link" data-tab="tab-sql"><?php _e( 'SQL Editor', 'd2t' ); ?></li>
 	</ul>
 
 
 	<div id="tab-gui" class="tab-content current">
-		<div id="table_name">
-			<label for="table_name">Table name:</label>
-			<input type="text" name="table_name" id="table_name" size="40" maxlength="64" value="" autofocus="" required />
+		<div id="meta-data">
+			<input type="text" name="table_name" id="table_name" size="40" maxlength="64" value="" placeholder="table_name" autofocus="" required />
 		</div>
+
 		<table id="columns" class="table table-striped">
 			<tbody>
 			<tr>
+				<th></th>
 				<th>Name</th>
 				<th>Type</th>
 				<th>Default Value</th>
-				<th>can be empty</th>
-				<th>must be unique</th>
+				<th>can be <br>NULL</th>
+				<th>must be <br>unique</th>
 				<th>Comments</th>
 			</tr>
+
+			<?php
+			for ($i = 1; $i <= 10; $i++): ?>
 			<tr>
-				<td class="center"><!-- column name --><input id="field_0_1" type="text" name="field_name[0]"
-				                                              maxlength="64" class="form-control" title="Column" size="10"
-				                                              value=""></td>
-				<td class="center"><!-- column type -->
-					<select class="column_type form-control" name="field_type[0]" id="field_0_2">
+				<td>
+					<button class="btn btn-danger">X</button>
+				</td>
+				<td><!-- column name -->
+					<input id="field_name_<?php echo $i ?>" type="text" name="field_name_<?php echo $i ?>"
+					       data-column="<?php echo $i ?>"
+					       maxlength="64" class="field_name form-control" title="Column" size="10"
+					       value="" placeholder="column_name">
+				</td>
+				<td><!-- column type -->
+					<select class="field_type form-control" name="field_type_<?php echo $i ?>"
+					        id="field_type_<?php echo $i ?>" data-column="<?php echo $i ?>">
 						<option
 							title="A 4-byte integer, signed range is -2,147,483,648 to 2,147,483,647, unsigned range is 0 to 4,294,967,295">
 							INT
@@ -65,40 +76,46 @@ if ( ! current_user_can( 'manage_database' ) ) {
 							title="A TEXT column with a maximum length of 65,535 (2^16 - 1) characters, stored with a two-byte prefix indicating the length of the value in bytes">
 							TEXT
 						</option>
-						<option title="A date, supported range is 1000-01-01 to 9999-12-31">DATE</option>
+						<option title="A date, supported range is 1000-01-01 to 9999-<12-31">DATE</option>
 					</select>
 				</td>
-
-				<td class="center"><!-- column default -->
-					<select name="field_default_type[0]" id="field_0_4" class="default_type form-control">
-						<option value="NONE">None</option>
-						<option value="USER_DEFINED">As defined:</option>
-						<option value="NULL">NULL</option>
-						<option value="CURRENT_TIMESTAMP">CURRENT_TIMESTAMP</option>
+				<td><!-- column default -->
+					<select name="field_default_type_<?php echo $i ?>" id="field_default_type_<?php echo $i ?>"
+					        class="field_default_type form-control" data-column="<?php echo $i ?>">
+						<option value="NONE" title="Empty field value">None</option>
+						<option value="USER_DEFINED" title="Click to define">As defined:</option>
+						<option value="NULL" title="Missing or not existent data">NULL</option>
+						<option value="CURRENT_TIMESTAMP" title="Format: YYYY-MM-DD">CURRENT_TIMESTAMP</option>
 					</select>
-					<br><input type="text" name="field_default_value[0]" size="12" value=""
-					           class="default_value form-control" style="display: none;">
+					<input type="text" name="field_default_value_<?php echo $i ?>"
+					       id="field_default_value_<?php echo $i ?>" class="field_default_value form-control"
+					       data-column="<?php echo $i ?>" size="12" value="" style="display: none;">
 				</td>
-				<td class="center"><!-- column NULL -->
-					<input name="field_null[0]" id="field_0_6" type="checkbox"
-				                                              value="NULL" class="allow_null form-control">
+				<td><!-- column NULL -->
+					<input name="field_allow_null_<?php echo $i ?>" id="field_allow_null_<?php echo $i ?>"
+					       data-column="<?php echo $i ?>" type="checkbox"
+				                                              value="NULL" class="field_allow_null form-control">
 				</td>
-				<td class="center">
-					<input name="field_null[0]" id="field_0_6_1" type="checkbox" value="NULL" class="is_unique form-control"></td>
-				<td class="center"><!-- column comments -->
-					<input id="field_0_9" type="text" name="field_comments[0]" size="12" maxlength="1024" value=""
-					       class="form-control"></td>
+				<td>
+					<input name="field_is_unique_<?php echo $i ?>" id="field_is_unique_<?php echo $i ?>"
+					       data-column="<?php echo $i ?>" type="checkbox" value="UNIQUE"
+					       class="is_unique form-control"></td>
+				<td><!-- column comments -->
+					<input type="text" name="field_comments_<?php echo $i ?>" id="field_comments_<?php echo $i ?>"
+					       size="12" maxlength="1024" value=""
+					       class="field_comments form-control" data-column="<?php echo $i ?>" placeholder="comment">
+				</td>
 			</tr>
+			<?php endfor; ?>
 			</tbody>
 		</table>
 		<button type="button" class="btn btn-outline-success">Add column</button>
 	</div>
 
 	<div id="tab-sql" class="tab-content">
-		<h2><?php _e( 'Run SQL Statements', 'd2t' ); ?></h2>
+		<h2><?php _e( 'Create-Table Statement', 'd2t' ); ?></h2>
 		<div>
 			<strong><?php _e( 'Separate Multiple Statements With A New Line', 'd2t' ); ?></strong><br/>
-			<p><?php _e( 'Use Only CREATE statements.', 'd2t' ); ?></p>
 		</div>
 		<form id="sql-statement-form">
 			<?php wp_nonce_field( 'd2t_run_sql_statement' ); ?>

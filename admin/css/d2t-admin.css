@@ -9,8 +9,7 @@ ul.tabs {
     list-style: none; }
 
 ul.tabs li {
-    background-color: #4d7991;
-    color: #dedede;
+    background-color: #7ec6ed;
     display: inline-block;
     padding: 10px 15px;
     margin-bottom: 0;
@@ -27,7 +26,7 @@ ul.tabs li.current {
     color: #ffffff; }
 
 ul.tabs li:hover {
-    text-shadow: 1px 1px #003343; }
+    text-shadow: 1px 0 #003343; }
 
 .tab-content {
     display: none;
@@ -49,3 +48,7 @@ ul.tabs li:hover {
 
 p.info {
     padding: 5px 15px; }
+
+#meta-data{
+    margin-bottom: 20px;
+}
