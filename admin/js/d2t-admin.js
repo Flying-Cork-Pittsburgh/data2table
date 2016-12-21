@@ -49,17 +49,26 @@
         last_column.after(new_column);
     });
 
+    $(document).on('click', '.clear-input', function (){
+        event.preventDefault();
+        var sql_target = $(this).attr('id');
+        var text_field = $('#sql_statement');
+        if(sql_target == "clear-sql-from-creator"){
+            text_field = $('#sql_from_creator');
+        }
+        text_field.val('');
+    } );
 
     //Ajax Request handling
 
     // submitting sql statement
     $(document).on('click', '.submit-sql-statement', function (event) {
+        event.preventDefault();
         var sql_target = $(this).attr('id');
         var text_field = $('#sql_statement');
         if(sql_target == "submit-from-creator"){
             text_field = $('#sql_from_creator');
         }
-        event.preventDefault();
         var submit_button = $('#'+sql_target);
         $.ajax({
             url: ajaxurl,  // this is part of the JS object you pass in from wp_localize_scripts.
@@ -71,19 +80,33 @@
             },
             beforeSend: function () {
                 submit_button.val('Loading data...');
-               // submit_button.disable();
+                submit_button.prop("disabled",true);
+                $('.alert').fadeOut( "slow" );
             },
             // use beforeSubmit to add your nonce to the form data before submitting.
             beforeSubmit: function (arr, $form, options) {
                 arr.push({"name": "nonce", "value": d2t_run_sql_statement.nonce});
             },
             success: function (result) {
-                submit_button.val(result);
-               // submit_button.enable();
-                //TODO render success message
+                var text = result.data;
+                if(result.success){
+                    $('.alert-success').find('.message').text(text);
+                    $('.alert-success').fadeIn( "slow" );
+                    submit_button.val('Run');
+                    submit_button.prop("disabled",false)
+                }else{
+                    $('.alert-danger').find('.message').text(text);
+                    $('.alert-danger').fadeIn( "slow" );
+                    submit_button.val('Run');
+                    submit_button.prop("disabled",false)
+                }
+
             },
-            error: function () {
-                submit_button.val('SQL Error');
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                $('.alert-danger').find('.message').text(errorThrown);
+                $('.alert-danger').fadeIn( "slow" );
+                submit_button.val('Run');
+                submit_button.prop("disabled",false)
             }
         });
 

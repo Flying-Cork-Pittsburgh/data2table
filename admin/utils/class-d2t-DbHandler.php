@@ -60,7 +60,7 @@ class D2T_DbHandler {
 				return $this->check_table_exists( $this->get_table_name_from_sql( $sql ) );
 			}
 		}
-		error_log( __( 'Failed to create table.', $this->d2t ), 0, plugin_dir_path( __FILE__ ) );
+		error_log( __( 'Failed to create table. There was no SQL Statement given.', $this->d2t ), 0, plugin_dir_path( __FILE__ ) );
 
 		return false;
 	}
@@ -81,7 +81,6 @@ class D2T_DbHandler {
 		     &&
 		     ! $this->check_table_exists( $this->get_table_name_from_sql( $sql ) )
 		) {
-
 			return true;
 		} else {
 			$message = __( 'Can not create a table because the table name already exists, or it is no valid statement.',
@@ -125,9 +124,9 @@ class D2T_DbHandler {
 			return false;
 		}
 
-		$checked_table_name = $this->is_lower_case_table_names ? strtolower( $table_name ) : $table_name;
-		$result = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $checked_table_name ) );
+		$valid_table_name = $this->is_lower_case_table_names ? strtolower( $table_name ) : $table_name;
+		$result = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $valid_table_name ) );
 
-		return $checked_table_name === $result;
+		return $valid_table_name === $result;
 	}
 }

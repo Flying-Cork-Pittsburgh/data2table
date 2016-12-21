@@ -26,6 +26,8 @@ if ( ! current_user_can( 'manage_database' ) ) {
 ?>
 <div class="wrap">
 
+<?php include_once 'partials/alerts_inc.php' ?>
+
 	<ul class="tabs">
 		<li class="tab-link current" data-tab="tab-gui"><?php _e( 'Create Table', 'd2t' ); ?></li>
 		<li class="tab-link" data-tab="tab-sql"><?php _e( 'SQL Editor', 'd2t' ); ?></li>
@@ -121,7 +123,7 @@ if ( ! current_user_can( 'manage_database' ) ) {
 				<input type="submit" id="submit-from-creator" class="submit-sql-statement btn btn-primary btn-lg"
 				       name="submit-from-creator" style="display: none;"
 				       value="<?php _e( 'Submit SQL', 'd2t' ); ?>"/>
-				<input type="button" class="btn btn-default btn-lg" name="cancel_creator"
+				<input type="button" id="clear-sql-from-creator" class="clear-input btn btn-default btn-lg" name="cancel_creator"
 				       value="<?php _e( 'Cancel', 'd2t' ); ?>"/>
 			</div>
 		</div>	</div>
@@ -142,7 +144,7 @@ if ( ! current_user_can( 'manage_database' ) ) {
 					<input type="submit" id="submit-sql-from-text" class="submit-sql-statement btn btn-primary btn-lg"
 					       name="submit-sql-from-text"
 					       value="<?php _e( 'Run', 'd2t' ); ?>"/>
-					<input type="button" class="btn btn-default btn-lg" name="cancel"
+					<input type="button" id="clear-sql-from-text" class="clear-input btn btn-default btn-lg" name="cancel"
 					       value="<?php _e( 'Cancel', 'd2t' ); ?>"/>
 				</div>
 			</div>

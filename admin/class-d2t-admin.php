@@ -91,12 +91,10 @@ class D2T_Admin {
 		$sql = ( $_POST['sql'] );
 
 		if ( $this->db->create_table( $sql ) ) {
-			echo json_encode(  __( 'Table successfully created', $this->d2t ) );
+			echo wp_send_json_success(  __( 'Table successfully created', $this->d2t ) );
 		} else {
-			echo json_encode(  __( 'Failed to create table.', $this->d2t ) );
+			echo wp_send_json_error( __( 'Failed to create table', $this->d2t ) );
 		}
-
-		die();
 	}
 
 	/**
