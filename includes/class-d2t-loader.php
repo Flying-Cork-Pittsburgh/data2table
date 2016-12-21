@@ -60,19 +60,28 @@ class D2T_Loader {
     private $name;
 
 	/**
+	 * The version of this plugin.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      string    $name    The current version of this plugin.
+	 */
+	private $version;
+
+	/**
 	 * Initialize the collections used to maintain the actions and filters.
 	 *
 	 * @since    1.0.0
 	 */
-	public function __construct($d2t, $name) {
+
+	public function __construct($d2t, $version, $name) {
 
 		$this->actions = array();
 		$this->filters = array();
 
-        $this->d2t = $d2t;
-        $this->name = $name;
-
-
+		$this->d2t = $d2t;
+		$this->version = $version;
+		$this->name = $name;
 	}
 
     /**
@@ -145,7 +154,6 @@ class D2T_Loader {
 		foreach ( $this->actions as $hook ) {
 			add_action( $hook['hook'], array( $hook['component'], $hook['callback'] ), $hook['priority'], $hook['accepted_args'] );
 		}
-
 	}
 
 }
