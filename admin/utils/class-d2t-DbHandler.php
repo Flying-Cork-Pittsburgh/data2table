@@ -32,11 +32,9 @@ class D2T_DbHandler {
 
 	public function __construct() {
 		global $wpdb;
-		// Value of Database var: `lower_case_table_names`)
-		$this->db_is_lower_case = boolval( array_column(
-			$wpdb->get_results( "SHOW VARIABLES WHERE variable_name = 'lower_case_table_names';",
-				'ARRAY_A' ), 'Value' ) );
-
+		// Value of Database var: `lower_case_table_names`
+		$this->is_lower_case_table_names = count($wpdb->get_row("SHOW VARIABLES WHERE variable_name = 'lower_case_table_names'
+		AND value = '1';")) > 0;
 	}
 
 	/**
@@ -127,9 +125,9 @@ class D2T_DbHandler {
 			return false;
 		}
 
-		$table_name = $this->is_lower_case_table_names ? strtolower( $table_name ) : $table_name;
-		$result     = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", strtolower( $table_name ) ) );
+		$checked_table_name = $this->is_lower_case_table_names ? strtolower( $table_name ) : $table_name;
+		$result = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $checked_table_name ) );
 
-		return strcmp( $table_name, $result );
+		return $checked_table_name === $result;
 	}
 }

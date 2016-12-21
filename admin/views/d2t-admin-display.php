@@ -50,10 +50,10 @@ if ( ! current_user_can( 'manage_database' ) ) {
 			</tr>
 
 			<?php
-			for ($i = 1; $i <= 10; $i++): ?>
-			<tr>
+			for ($i = 1; $i <= 5; $i++): ?>
+			<tr data-column="<?php echo $i ?>">
 				<td>
-					<button class="btn btn-danger">X</button>
+					<button class="btn btn-danger delete-column" data-column="<?php echo $i ?>">X</button>
 				</td>
 				<td><!-- column name -->
 					<input id="field_name_<?php echo $i ?>" type="text" name="field_name_<?php echo $i ?>"
@@ -109,8 +109,22 @@ if ( ! current_user_can( 'manage_database' ) ) {
 			<?php endfor; ?>
 			</tbody>
 		</table>
-		<button type="button" class="btn btn-outline-success">Add column</button>
-	</div>
+		<!-- TODO the column_id is not incremented - so the saving will not work -->
+<!--		<button type="button" class="btn btn-outline-success add-column">Add column</button>-->
+		<textarea rows="10" name="sql_from_creator" id="sql_from_creator" class="form-control" dir="ltr"
+		          style="display: none;" ></textarea>
+		<div class="form-group">
+			<div class="btn-group" role="group" aria-label="...">
+				<input type="submit" id="create-from-creator" class="btn btn-primary btn-lg"
+				       name="create-from-creator"
+				       value="<?php _e( 'Create SQL', 'd2t' ); ?>"/>
+				<input type="submit" id="submit-from-creator" class="submit-sql-statement btn btn-primary btn-lg"
+				       name="submit-from-creator" style="display: none;"
+				       value="<?php _e( 'Submit SQL', 'd2t' ); ?>"/>
+				<input type="button" class="btn btn-default btn-lg" name="cancel_creator"
+				       value="<?php _e( 'Cancel', 'd2t' ); ?>"/>
+			</div>
+		</div>	</div>
 
 	<div id="tab-sql" class="tab-content">
 		<h2><?php _e( 'Create-Table Statement', 'd2t' ); ?></h2>
@@ -125,8 +139,8 @@ if ( ! current_user_can( 'manage_database' ) ) {
 			</div>
 			<div class="form-group">
 				<div class="btn-group" role="group" aria-label="...">
-					<input type="submit" id="submit-sql-statement" class="btn btn-primary btn-lg"
-					       name="submit-sql-statement"
+					<input type="submit" id="submit-sql-from-text" class="submit-sql-statement btn btn-primary btn-lg"
+					       name="submit-sql-from-text"
 					       value="<?php _e( 'Run', 'd2t' ); ?>"/>
 					<input type="button" class="btn btn-default btn-lg" name="cancel"
 					       value="<?php _e( 'Cancel', 'd2t' ); ?>"/>

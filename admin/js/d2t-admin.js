@@ -31,22 +31,47 @@
         }
     });
 
+    // delete column on button click
+    $(document).on('click', '.delete-column', function () {
+        var column_id = $(this).data('column');
+        $("tr").find("[data-column='" + column_id + "']").closest('tr').remove();
+    });
+
+    // duplicate last column
+    //TODO the column_id is not incremented - so the saving will not work
+    $(document).on('click', '.add-column', function () {
+        var last_column =  $("#columns").find('tr:last-child');
+        var new_column = last_column.clone();
+        new_column.replaceWith();
+        new_column.find('input').val('');
+        new_column.find("input[type='checkbox']").prop('checked', false);;
+        new_column.find('select option:first').select();
+        last_column.after(new_column);
+    });
+
 
     //Ajax Request handling
-    $(document).on('click', '#submit-sql-statement', function (event) {
+
+    // submitting sql statement
+    $(document).on('click', '.submit-sql-statement', function (event) {
+        var sql_target = $(this).attr('id');
+        var text_field = $('#sql_statement');
+        if(sql_target == "submit-from-creator"){
+            text_field = $('#sql_from_creator');
+        }
         event.preventDefault();
-        var submit_button = $('#submit-sql-statement');
+        var submit_button = $('#'+sql_target);
         $.ajax({
             url: ajaxurl,  // this is part of the JS object you pass in from wp_localize_scripts.
             type: 'post',        // 'get' or 'post', override for form's 'method' attribute
             dataType: 'json',
             data: {
                 action: 'ajax_create_table',
-                sql: $("#sql_statement").val()
+                sql:text_field.val()
             },
             beforeSend: function () {
                 submit_button.val('Loading data...');
-                submit_button.disable();
+               // submit_button.disable();
             },
             // use beforeSubmit to add your nonce to the form data before submitting.
             beforeSubmit: function (arr, $form, options) {
@@ -54,7 +79,7 @@
             },
             success: function (result) {
                 submit_button.val(result);
-                submit_button.enable();
+               // submit_button.enable();
                 //TODO render success message
             },
             error: function () {
@@ -63,5 +88,7 @@
         });
 
     })
+
+
 })(jQuery);
 
