@@ -33,8 +33,8 @@ class D2T_DbHandler {
 	public function __construct() {
 		global $wpdb;
 		// Value of Database var: `lower_case_table_names`
-		$this->is_lower_case_table_names = count($wpdb->get_row("SHOW VARIABLES WHERE variable_name = 'lower_case_table_names'
-		AND value = '1';")) > 0;
+		$this->is_lower_case_table_names = count( $wpdb->get_row( "SHOW VARIABLES WHERE variable_name = 'lower_case_table_names'
+		AND value = '1';" ) ) > 0;
 	}
 
 	/**
@@ -49,19 +49,20 @@ class D2T_DbHandler {
 	public function create_table( $sql = null ) {
 		global $wpdb;
 		if ( ! empty( $sql ) ) {
-			if ( $this->sql_statement_is_valid( $sql ) ) {
+				if ( $this->sql_statement_is_valid( $sql ) ) {
 
-				//https://codex.wordpress.org/Creating_Tables_with_Plugins#Creating_or_Updating_the_Table
-				require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-				dbDelta( $sql );
-				$wpdb->flush();
+					//https://codex.wordpress.org/Creating_Tables_with_Plugins#Creating_or_Updating_the_Table
+					require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+					dbDelta( $sql );
+					$wpdb->flush();
 
-				// returns always false
-				return $this->check_table_exists( $this->get_table_name_from_sql( $sql ) );
-			}
+					// returns always false
+					return $this->check_table_exists( $this->get_table_name_from_sql( $sql ) );
+				}
+		}else{
+			$message =  __( 'Failed to create table. There was no SQL Statement given.', $this->d2t );
+			throw new Exception( $message );
 		}
-		error_log( __( 'Failed to create table. There was no SQL Statement given.', $this->d2t ), 0, plugin_dir_path( __FILE__ ) );
-
 		return false;
 	}
 
@@ -83,11 +84,8 @@ class D2T_DbHandler {
 		) {
 			return true;
 		} else {
-			$message = __( 'Can not create a table because the table name already exists, or it is no valid statement.',
-				$this->d2t );
-			error_log( $message, 0, plugin_dir_path( __FILE__ ) );
-
-			return false;
+			$message = __( 'Can not create a table because the table name already exists, or it is no valid statement.', $this->d2t );
+			throw new Exception( $message );
 		}
 	}
 
@@ -119,13 +117,12 @@ class D2T_DbHandler {
 		global $wpdb;
 
 		if ( empty( $table_name ) ) {
-			error_log( __( 'Table name is empty.', $this->d2t ), 0, plugin_dir_path( __FILE__ ) );
-
-			return false;
+			$message = __( 'Table name is empty.', $this->d2t );
+			throw new Exception( $message );
 		}
 
 		$valid_table_name = $this->is_lower_case_table_names ? strtolower( $table_name ) : $table_name;
-		$result = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $valid_table_name ) );
+		$result           = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $valid_table_name ) );
 
 		return $valid_table_name === $result;
 	}

@@ -1,11 +1,8 @@
 (function ($) {
     'use strict';
 
-    /**
-     * All of the code for your admin-facing JavaScript source
-     * should reside in this file.
-     *
-     * Javascript functions and Ajax Request Handling
+    /*
+     * Javascript functions
      */
 
 
@@ -49,6 +46,7 @@
         last_column.after(new_column);
     });
 
+    // clear input field on cancel click
     $(document).on('click', '.clear-input', function (){
         event.preventDefault();
         var sql_target = $(this).attr('id');
@@ -59,7 +57,9 @@
         text_field.val('');
     } );
 
-    //Ajax Request handling
+    /**
+     *Ajax Request Handling
+     */
 
     // submitting sql statement
     $(document).on('click', '.submit-sql-statement', function (event) {
