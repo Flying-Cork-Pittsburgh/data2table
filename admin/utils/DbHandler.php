@@ -33,8 +33,8 @@ class D2T_DbHandler {
 	public function __construct() {
 		global $wpdb;
 		// Value of Database var: `lower_case_table_names`
-		$this->is_lower_case_table_names = count( $wpdb->get_row( "SHOW VARIABLES WHERE variable_name = 'lower_case_table_names'
-		AND value = '1';" ) ) > 0;
+		$this->is_lower_case_table_names = count( $wpdb->get_row( "SHOW VARIABLES WHERE 
+			variable_name = 'lower_case_table_names' AND value = '1';" ) ) > 0;
 	}
 
 	/**
@@ -68,18 +68,19 @@ class D2T_DbHandler {
 	}
 
 	/**
-	 * Create table on the database
+	 * Builds a sql statement from values which are given as a json object
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $sql Valid SQL statement for creating a new table
+	 * @param string $sql JSON Object which contains values for table to create
 	 *
-	 * @return boolean
+	 * @return String
 	 */
 	public function build_sql_statement( $values = null ) {
 		global $wpdb;
 		$sql = '';
 
+		// TODO build sql Create Table statement
 		return $sql;
 	}
 
@@ -93,10 +94,10 @@ class D2T_DbHandler {
 	 * @return boolean
 	 */
 	public function sql_statement_is_valid( $sql = null ) {
-		
-		if ( preg_match( '/(?i)(create table)( if exists)?/', $sql )  // it should be a "create table" statement
+
+		if ( preg_match( '/(?i)(create table)( if exists)?/', $sql )  // should start with a "create table" statement
 		     &&
-		     preg_match( '/(\)\;)$/', $sql )                             // statement should end with ');'
+		     preg_match( '/(\)\;)$/', $sql ) // statement should end with ');'
 		) {
 			if ( ! $this->check_table_exists( $this->get_table_name_from_sql( $sql ) ) ) {
 				return true;
