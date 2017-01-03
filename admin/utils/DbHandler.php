@@ -93,8 +93,7 @@ class D2T_DbHandler {
 	 * @return boolean
 	 */
 	public function sql_statement_is_valid( $sql = null ) {
-		$message = '';
-
+		
 		if ( preg_match( '/(?i)(create table)( if exists)?/', $sql )  // it should be a "create table" statement
 		     &&
 		     preg_match( '/(\)\;)$/', $sql )                             // statement should end with ');'
