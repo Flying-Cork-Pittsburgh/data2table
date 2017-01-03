@@ -72,15 +72,26 @@ class D2T_DbHandler {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $sql JSON Object which contains values for table to create
+	 * @param string $values JSON Object which contains values for table to create
 	 *
 	 * @return String
 	 */
 	public function build_sql_statement( $values = null ) {
 		global $wpdb;
-		$sql = '';
+		$table_structure = json_decode($values);
+		$sql = 'CREATE TABLE' . ' '
+		       . $table_structure->table_name
+		       . ' ('
+		       . 'id int NOT NULL,';
 
-		// TODO build sql Create Table statement
+		foreach ( $table_structure->columns as $column )
+		{
+			$sql .= ', ' . $column->name . ' '
+			        . $column->type . ' '
+			        . $column->constraint ;
+		}
+		$sql .= ' ' . 'PRIMARY KEY (id))';
+		$sql .= ');';
 		return $sql;
 	}
 

@@ -51,6 +51,15 @@ if ( ! current_user_can( 'manage_database' ) ) {
 				<th>must be <br>unique</th>
 				<th>Comments</th>
 			</tr>
+			<tr>
+				<td></td>
+				<td><input value="id" disabled class="field_type form-control" ></td>
+				<td><input value="INT" disabled class="field_type form-control" ></td>
+				<td><input value="autoincrement" disabled class="field_type form-control" ></td>
+				<td><input type="checkbox" disabled class="field_type form-control" ></td>
+				<td><input type="checkbox" selected disabled class="field_type form-control" ></td>
+				<td><input value="automatically included" disabled class="field_type form-control" ></td>
+			</tr>
 
 			<?php
 			// TODO remove all name-attributes, they are not in use

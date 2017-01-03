@@ -119,6 +119,7 @@
         var columns = $('#columns').find('.column');
         for (var i = 0; i < columns.length; i++) {
             values['columns'][i]['name'] = columns[i].find('.field_name').val();
+            // TODO get contraints and CO
         }
 
         var submit_button = $(this);
