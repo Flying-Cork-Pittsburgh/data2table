@@ -84,9 +84,6 @@ class D2T_Admin {
 	 *
 	 */
 	public function ajax_create_table() {
-		// TODO refactor to generic ajax method
-		// call_user_func oder __invoke method in class
-
 		$sql = ( $_POST['sql'] );
 
 		try{
@@ -95,6 +92,23 @@ class D2T_Admin {
 			echo wp_send_json_error($e->getMessage());
 		}
 		echo wp_send_json_success(  __( 'Table successfully created', $this->d2t ) );
+	}
+
+	/**
+	 * handles ajax request: build sql statement
+	 *
+	 * @since 1.0.0
+	 *
+	 */
+	public function ajax_build_sql_statement() {
+		$values = ( $_POST['values'] );
+
+		try{
+			$this->db->build_sql_statement( $values );
+		}catch (Exception $e){
+			echo wp_send_json_error($e->getMessage());
+		}
+		echo wp_send_json_success(  __( 'SQL Statement successfully created!', $this->d2t ) );
 	}
 
 	/**

@@ -49,21 +49,38 @@ class D2T_DbHandler {
 	public function create_table( $sql = null ) {
 		global $wpdb;
 		if ( ! empty( $sql ) ) {
-				if ( $this->sql_statement_is_valid( $sql ) ) {
+			if ( $this->sql_statement_is_valid( $sql ) ) {
 
-					//https://codex.wordpress.org/Creating_Tables_with_Plugins#Creating_or_Updating_the_Table
-					require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-					dbDelta( $sql );
-					$wpdb->flush();
-
-					// returns always false
-					return $this->check_table_exists( $this->get_table_name_from_sql( $sql ) );
+				//https://codex.wordpress.org/Creating_Tables_with_Plugins#Creating_or_Updating_the_Table
+				require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+				$result = dbDelta( $sql );
+				if ( ! $wpdb->result ) {
+					$message = __( 'Failed to create table. The SQL Statement was not valid.', $this->d2t );
+					throw new Exception( $message );
 				}
-		}else{
-			$message =  __( 'Failed to create table. There was no SQL Statement given.', $this->d2t );
-			throw new Exception( $message );
+				$wpdb->flush();
+
+				return $this->check_table_exists( $this->get_table_name_from_sql( $sql ) );
+			}
 		}
-		return false;
+		$message = __( 'Failed to create table. The SQL Statement was not given/valid.', $this->d2t );
+		throw new Exception( $message );
+	}
+
+	/**
+	 * Create table on the database
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $sql Valid SQL statement for creating a new table
+	 *
+	 * @return boolean
+	 */
+	public function build_sql_statement( $values = null ) {
+		global $wpdb;
+		$sql = '';
+
+		return $sql;
 	}
 
 	/**
@@ -80,13 +97,14 @@ class D2T_DbHandler {
 
 		if ( preg_match( '/(?i)(create table)( if exists)?/', $sql )  // it should be a "create table" statement
 		     &&
-		     ! $this->check_table_exists( $this->get_table_name_from_sql( $sql ) )
+		     preg_match( '/(\)\;)$/', $sql )                             // statement should end with ');'
 		) {
-			return true;
-		} else {
-			$message = __( 'Can not create a table because the table name already exists, or it is no valid statement.', $this->d2t );
-			throw new Exception( $message );
+			if ( ! $this->check_table_exists( $this->get_table_name_from_sql( $sql ) ) ) {
+				return true;
+			}
 		}
+		$message = __( 'Can not create a table because the table name already exists, or it is no valid statement.', $this->d2t );
+		throw new Exception( $message );
 	}
 
 	/**

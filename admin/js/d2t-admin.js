@@ -79,7 +79,7 @@
                 sql:text_field.val()
             },
             beforeSend: function () {
-                submit_button.val('Loading data...');
+                submit_button.val('Please wait ...');
                 submit_button.prop("disabled",true);
                 $('.alert').fadeOut( "slow" );
             },
@@ -110,7 +110,56 @@
             }
         });
 
-    })
+    });
+
+    // pack values from creator into json to create sql statement from Backend
+    $(document).on('click', '#create-sql-from-creator', function (){
+        var values = {};
+        values['table_name'] = $('#table_name').val();
+        var columns = $('#columns').find('.column');
+        for (var i = 0; i < columns.length; i++) {
+            values['columns'][i]['name'] = columns[i].find('.field_name').val();
+        }
+
+        var submit_button = $(this);
+        $.ajax({
+            url: ajaxurl,  // this is part of the JS object you pass in from wp_localize_scripts.
+            type: 'post',        // 'get' or 'post', override for form's 'method' attribute
+            dataType: 'json',
+            data: {
+                action: 'ajax_build_sql_statement',
+                values: values
+            },
+            beforeSend: function () {
+                submit_button.val('Please wait ...');
+                submit_button.prop("disabled",true);
+                $('.alert').fadeOut( "slow" );
+            },
+            // use beforeSubmit to add your nonce to the form data before submitting.
+            beforeSubmit: function (arr, $form, options) {
+                arr.push({"name": "nonce", "value": d2t_run_sql_statement.nonce});
+            },
+            success: function (result) {
+                var text = result.data;
+                if(result.success){
+                    $('.alert-success').find('.message').text(text);
+                    $('.alert-success').fadeIn( "slow" );
+                    submit_button.val('Create SQL');
+                    submit_button.prop("disabled",false)
+                }else{
+                    $('.alert-danger').find('.message').text(text);
+                    $('.alert-danger').fadeIn( "slow" );
+                    submit_button.val('Create SQL');
+                    submit_button.prop("disabled",false)
+                }
+
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                $('.alert-danger').find('.message').text(errorThrown);
+                $('.alert-danger').fadeIn( "slow" );
+            }
+        });
+    } );
 
 
 })(jQuery);
