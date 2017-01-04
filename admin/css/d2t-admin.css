@@ -57,3 +57,11 @@ p.info {
     width: 200px;
     border-radius: .25rem;
 }
+
+.btn-group{
+    margin: 20px 0 20px 0;
+}
+
+#table-actions{
+    float: right;
+}

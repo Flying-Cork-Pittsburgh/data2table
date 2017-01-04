@@ -4,7 +4,6 @@
     /*
      * Javascript functions
      */
-
     $(document).on('click', 'ul.tabs li', function () {
         var tab_id = $(this).attr('data-tab');
 
@@ -25,14 +24,11 @@
         }
     });
 
-    // delete column on button click
+   // delete last column on button click
     $(document).on('click', '.delete-column', function () {
-        var column_id = $(this).data('column');
-        $("tr").find("[data-column='" + column_id + "']").closest('tr').remove();
+        $('#columns').find('tr').last().remove();
     });
 
-    // duplicate last column
-    //TODO the column_id is not incremented - so the saving will not work
     $(document).on('click', '.add-column', function () {
         var last_column = $("#columns").find('tr:last-child');
         var new_column = last_column.clone();
@@ -64,6 +60,7 @@
         event.preventDefault();
         var sql_target = $(this).attr('id');
         var text_field = $('#sql_statement');
+        var create_sql = $('#create-sql-from-creator');
         if (sql_target == "submit-from-creator") {
             text_field = $('#sql_from_creator');
         }
@@ -95,16 +92,20 @@
                 } else {
                     $('.alert-danger').find('.message').text(text);
                     $('.alert-danger').fadeIn("slow");
-                    submit_button.val('Run');
-                    submit_button.prop("disabled", false)
+
+                    if(submit_button.selector == '#submit-from-creator'){
+                        submit_button.hide();
+                        create_sql.show();
+                    }else{
+                        submit_button.val('Run');
+                    }
+                        submit_button.prop("disabled", false);
                 }
 
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 $('.alert-danger').find('.message').text(errorThrown);
                 $('.alert-danger').fadeIn("slow");
-                submit_button.val('Run');
-                submit_button.prop("disabled", false)
             }
         });
 
@@ -154,6 +155,8 @@
                 if (result.success) {
                     $('#sql_from_creator').text(text);
                     $('#sql_from_creator').fadeIn("slow");
+                    submit_button.hide();
+                    $('#submit-from-creator').show();
                     submit_button.val('Create SQL');
                     submit_button.prop("disabled", false)
                 } else {
@@ -170,7 +173,6 @@
             }
         });
     });
-
 
 })(jQuery);
 

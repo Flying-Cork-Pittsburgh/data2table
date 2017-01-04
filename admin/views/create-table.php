@@ -42,7 +42,6 @@ if ( ! current_user_can( 'manage_database' ) ) {
 		<table id="columns" class="table table-striped">
 			<tbody>
 			<tr>
-				<th></th>
 				<th>Name</th>
 				<th>Type</th>
 				<th>Default Value</th>
@@ -51,7 +50,6 @@ if ( ! current_user_can( 'manage_database' ) ) {
 				<th>Comments</th>
 			</tr>
 			<tr>
-				<td></td>
 				<td><input value="id" disabled class="field_type form-control"></td>
 				<td><input value="int" disabled class="field_type form-control"></td>
 				<td><input value="autoincrement" disabled class="field_type form-control"></td>
@@ -61,20 +59,14 @@ if ( ! current_user_can( 'manage_database' ) ) {
 			</tr>
 
 			<?php
-			// TODO remove all name-attributes, they are not in use
 			for ( $i = 1; $i <= 5; $i ++ ): ?>
-				<tr data-column="<?php echo $i ?>" class="column">
-					<td>
-						<button class="btn btn-danger btn-sm delete-column" data-column="<?php echo $i ?>">X</button>
-					</td>
+				<tr class="column">
 					<td><!-- column name -->
-						<input id="field_name_<?php echo $i ?>" type="text" data-column="<?php echo $i ?>"
-						       maxlength="64" class="field_name form-control" title="Column" size="10"
+						<input type="text" maxlength="64" class="field_name form-control" title="Column" size="10"
 						       value="" placeholder="column_name" required>
 					</td>
 					<td><!-- column type -->
-						<select class="field_type form-control" id="field_type_<?php echo $i ?>"
-						        data-column="<?php echo $i ?>">
+						<select class="field_type form-control">
 							<option
 								title="A 4-byte integer, signed range is -2,147,483,648 to 2,147,483,647, unsigned range is 0 to 4,294,967,295">
 								int
@@ -93,35 +85,33 @@ if ( ! current_user_can( 'manage_database' ) ) {
 						</select>
 					</td>
 					<td><!-- column default -->
-						<select id="field_default_type_<?php echo $i ?>"
-						        class="field_default_type form-control" data-column="<?php echo $i ?>">
+						<select class="field_default_type form-control">
 							<option value="NONE" title="Empty field value">None</option>
 							<option value="USER_DEFINED" title="Click to define">As defined:</option>
 							<option value="NULL" title="Missing or not existent data">NULL</option>
 							<option value="CURRENT_TIMESTAMP" title="Format: YYYY-MM-DD">CURRENT_TIMESTAMP</option>
 						</select>
-						<input type="text" id="field_default_value_<?php echo $i ?>"
-						       class="field_default_value form-control"
-						       data-column="<?php echo $i ?>" size="12" value="" style="display: none;">
+						<input type="text" class="field_default_value form-control"
+						       size="12" value="" style="display: none;">
 					</td>
 					<td><!-- column NULL -->
-						<input id="field_allow_null_<?php echo $i ?>" data-column="<?php echo $i ?>" type="checkbox"
-						       value="NULL" class="field_allow_null form-check">
+						<input type="checkbox" value="NULL" class="field_allow_null form-check">
 					</td>
 					<td>
-						<input id="field_is_unique_<?php echo $i ?>" data-column="<?php echo $i ?>" type="checkbox"
-						       value="UNIQUE" class="is_unique form-check">
+						<input type="checkbox" value="UNIQUE" class="is_unique form-check">
 					</td>
 					<td><!-- column comments -->
-						<input type="text" id="field_comments_<?php echo $i ?>" size="12" maxlength="1024" value=""
-						       class="field_comments form-control" data-column="<?php echo $i ?>" placeholder="comment">
+						<input type="text" size="12" maxlength="1024" value=""
+						       class="field_comments form-control" placeholder="comment">
 					</td>
 				</tr>
 			<?php endfor; ?>
 			</tbody>
 		</table>
-		<!-- TODO the column_id is not incremented - so the saving will not work -->
-		<!--		<button type="button" class="btn btn-outline-success add-column">Add column</button>-->
+		<div class="btn-group pull-right" id="table-actions" role="group" aria-label="...">
+				<button type="button" class="btn btn-outline-success add-column">Add column</button>
+				<button type="button" class="btn btn-outline-danger delete-column">remove column</button>
+		</div>
 		<form id="sql-creator-form">
 			<?php wp_nonce_field( 'd2t_create_sql_statement' ); ?>
 			<textarea rows="10" name="sql_from_creator" id="sql_from_creator" class="form-control" dir="ltr"
