@@ -14,17 +14,7 @@
         $("#" + tab_id).addClass('current');
     });
 
-    // show field for setting default value
-    $(document).on('change', '.field_default_type', function () {
-        var value_field = $('#field_default_value_' + $(this).data('column'));
-        if ($(this).val() == 'USER_DEFINED') {
-            value_field.show();
-        } else {
-            value_field.hide();
-        }
-    });
-
-   // delete last column on button click
+    // delete last column on button click
     $(document).on('click', '.delete-column', function () {
         $('#columns').find('tr').last().remove();
     });
@@ -65,6 +55,7 @@
             text_field = $('#sql_from_creator');
         }
         var submit_button = $('#' + sql_target);
+        var submit_button_val = submit_button.val();
         $.ajax({
             url: ajaxurl,  // this is part of the JS object you pass in from wp_localize_scripts.
             type: 'post',        // 'get' or 'post', override for form's 'method' attribute
@@ -87,19 +78,19 @@
                 if (result.success) {
                     $('.alert-success').find('.message').text(text);
                     $('.alert-success').fadeIn("slow");
-                    submit_button.val('Run');
+                    submit_button.val(submit_button_val);
                     submit_button.prop("disabled", false)
                 } else {
                     $('.alert-danger').find('.message').text(text);
                     $('.alert-danger').fadeIn("slow");
 
-                    if(submit_button.selector == '#submit-from-creator'){
+                    if (submit_button.selector == '#submit-from-creator') {
                         submit_button.hide();
                         create_sql.show();
-                    }else{
-                        submit_button.val('Run');
+                    } else {
+                        submit_button.val(submit_button_val);
                     }
-                        submit_button.prop("disabled", false);
+                    submit_button.prop("disabled", false);
                 }
 
             },
@@ -121,12 +112,20 @@
         var i = 0;
         columns.each(function () {
             if ($(this).find('.field_name').val().length != 0) {
-
                 var properties = {};
                 properties['name'] = $(this).find('.field_name').val();
                 properties['type'] = $(this).find('.field_type').val();
-                // TODO get contraints and CO
-
+                properties['default'] = $(this).find('.field_default_value').val();
+                    if (properties['default'] != '') {
+                        properties['default'] = "DEFAULT '" + properties['default'] + "'";
+                    }
+                properties['constraint'] = '';
+                if ($(this).find('.field_not_null').attr('checked')) {
+                    properties['constraint'] += $(this).find('.field_not_null').val() + ' ';
+                }
+                if ($(this).find('.field_is_unique').attr('checked')) {
+                    properties['constraint'] += $(this).find('.field_is_unique').val();
+                }
                 table['columns'][i] = properties;
                 i++;
             }
@@ -152,6 +151,7 @@
             },
             success: function (result) {
                 var text = result.data;
+                text = text.replace(/\\/g, '');
                 if (result.success) {
                     $('#sql_from_creator').text(text);
                     $('#sql_from_creator').fadeIn("slow");

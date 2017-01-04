@@ -45,17 +45,15 @@ if ( ! current_user_can( 'manage_database' ) ) {
 				<th>Name</th>
 				<th>Type</th>
 				<th>Default Value</th>
-				<th>can be <br>NULL</th>
-				<th>must be <br>unique</th>
-				<th>Comments</th>
+				<th>NOT NULL</th>
+				<th>UNIQUE</th>
 			</tr>
 			<tr>
 				<td><input value="id" disabled class="field_type form-control"></td>
 				<td><input value="int" disabled class="field_type form-control"></td>
-				<td><input value="autoincrement" disabled class="field_type form-control"></td>
+				<td><input value="AUTO_INCREMENT" disabled class="field_type form-control"></td>
 				<td><input type="checkbox" disabled class="field_type form-check"></td>
 				<td><input type="checkbox" checked disabled class="field_type form-check"></td>
-				<td><input value="automatically included" disabled class="field_type form-control"></td>
 			</tr>
 
 			<?php
@@ -85,24 +83,14 @@ if ( ! current_user_can( 'manage_database' ) ) {
 						</select>
 					</td>
 					<td><!-- column default -->
-						<select class="field_default_type form-control">
-							<option value="NONE" title="Empty field value">None</option>
-							<option value="USER_DEFINED" title="Click to define">As defined:</option>
-							<option value="NULL" title="Missing or not existent data">NULL</option>
-							<option value="CURRENT_TIMESTAMP" title="Format: YYYY-MM-DD">CURRENT_TIMESTAMP</option>
-						</select>
 						<input type="text" class="field_default_value form-control"
-						       size="12" value="" style="display: none;">
+						       size="12" value="" placeholder="NONE">
 					</td>
 					<td><!-- column NULL -->
-						<input type="checkbox" value="NULL" class="field_allow_null form-check">
+						<input type="checkbox" value="NOT NULL" class="field_not_null form-check">
 					</td>
 					<td>
-						<input type="checkbox" value="UNIQUE" class="is_unique form-check">
-					</td>
-					<td><!-- column comments -->
-						<input type="text" size="12" maxlength="1024" value=""
-						       class="field_comments form-control" placeholder="comment">
+						<input type="checkbox" value="UNIQUE" class="field_is_unique form-check">
 					</td>
 				</tr>
 			<?php endfor; ?>

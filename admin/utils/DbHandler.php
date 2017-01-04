@@ -53,7 +53,7 @@ class D2T_DbHandler {
 
 				//https://codex.wordpress.org/Creating_Tables_with_Plugins#Creating_or_Updating_the_Table
 				require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-				$result = dbDelta( $sql );
+				dbDelta( $sql );
 				if ( ! $wpdb->result ) {
 					$message = __( 'Failed to create table. The SQL Statement was not valid.', $this->d2t );
 					throw new Exception( $message );
@@ -77,16 +77,16 @@ class D2T_DbHandler {
 	 * @return String
 	 */
 	public function build_sql_statement( $values = null ) {
-		global $wpdb;
 		$sql = 'CREATE TABLE' . ' '
 		       . $values['table_name']
 		       . ' ('
 		       . 'id int NOT NULL AUTO_INCREMENT';
 		foreach ( $values['columns'] as $column )
 		{
-			$sql .= ', ' . $column['name'] . ' '
-			        . $column['type'] . ' '
-			        . $column['constraint'] ;
+			$sql .= ', ' . $column['name'];
+			$sql .= ' ' . $column['type'];
+			$sql .= ($column['default'] == '') ? '' : ' ' . $column['default'];
+			$sql .= ($column['constraint'] == '') ? '' : ' ' . $column['constraint'];
 		}
 		$sql .= ', ' . 'PRIMARY KEY (id)';
 		$sql .= ' );';
