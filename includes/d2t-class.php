@@ -168,6 +168,9 @@ class D2T {
 		$this->loader->add_action("wp_ajax_nopriv_ajax_create_table", $plugin_admin, "ajax_create_table");
 		$this->loader->add_action("wp_ajax_ajax_create_table", $plugin_admin, "ajax_create_table");
 
+		$this->loader->add_action("wp_ajax_nopriv_ajax_build_sql_statement", $plugin_admin, "ajax_build_sql_statement");
+		$this->loader->add_action("wp_ajax_ajax_build_sql_statement", $plugin_admin, "ajax_build_sql_statement");
+
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_ajax_sql_submission' );
 
 

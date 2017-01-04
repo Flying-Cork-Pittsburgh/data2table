@@ -78,20 +78,18 @@ class D2T_DbHandler {
 	 */
 	public function build_sql_statement( $values = null ) {
 		global $wpdb;
-		$table_structure = json_decode($values);
 		$sql = 'CREATE TABLE' . ' '
-		       . $table_structure->table_name
+		       . $values['table_name']
 		       . ' ('
-		       . 'id int NOT NULL,';
-
-		foreach ( $table_structure->columns as $column )
+		       . 'id int NOT NULL AUTO_INCREMENT';
+		foreach ( $values['columns'] as $column )
 		{
-			$sql .= ', ' . $column->name . ' '
-			        . $column->type . ' '
-			        . $column->constraint ;
+			$sql .= ', ' . $column['name'] . ' '
+			        . $column['type'] . ' '
+			        . $column['constraint'] ;
 		}
-		$sql .= ' ' . 'PRIMARY KEY (id))';
-		$sql .= ');';
+		$sql .= ', ' . 'PRIMARY KEY (id)';
+		$sql .= ' );';
 		return $sql;
 	}
 

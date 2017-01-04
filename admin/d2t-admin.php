@@ -102,13 +102,14 @@ class D2T_Admin {
 	 */
 	public function ajax_build_sql_statement() {
 		$values = ( $_POST['values'] );
+		$sql = '';
 
 		try{
-			$this->db->build_sql_statement( $values );
+			$sql = $this->db->build_sql_statement( $values );
 		}catch (Exception $e){
 			echo wp_send_json_error($e->getMessage());
 		}
-		echo wp_send_json_success(  __( 'SQL Statement successfully created!', $this->d2t ) );
+		echo wp_send_json_success( $sql );
 	}
 
 	/**
@@ -189,6 +190,16 @@ class D2T_Admin {
 				'ajaxurl'    => admin_url( 'admin-ajax.php' ),
 				//url for php file that process ajax request to WP
 				'nonce'      => wp_create_nonce( "d2t_run_sql_statement" ),
+				// this is a unique token to prevent form hijacking
+				'query_vars' => json_encode( $wp_query->query )
+			)
+		);
+
+		wp_localize_script( 'd2t-admin', 'd2t_create_sql_statement',
+			array(
+				'ajaxurl'    => admin_url( 'admin-ajax.php' ),
+				//url for php file that process ajax request to WP
+				'nonce'      => wp_create_nonce( "d2t_create_sql_statement" ),
 				// this is a unique token to prevent form hijacking
 				'query_vars' => json_encode( $wp_query->query )
 			)

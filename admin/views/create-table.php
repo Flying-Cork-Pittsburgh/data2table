@@ -34,10 +34,11 @@ if ( ! current_user_can( 'manage_database' ) ) {
 	</ul>
 
 
-	<div id="tab-gui" class="tab-content current">
+	<div id="tab-gui" class="tab-content current" role="form" data-toggle="validator">
 		<div id="meta-data">
 			<input type="text" name="table_name" id="table_name" size="40" maxlength="64" value=""
-			       placeholder="table_name" autofocus="" required/>
+			       placeholder="table_name" autofocus="" required
+			       data-error="can not be empty" class="form-control"/>
 		</div>
 
 		<table id="columns" class="table table-striped">
@@ -72,24 +73,26 @@ if ( ! current_user_can( 'manage_database' ) ) {
 						<input id="field_name_<?php echo $i ?>" type="text" name="field_name_<?php echo $i ?>"
 						       data-column="<?php echo $i ?>"
 						       maxlength="64" class="field_name form-control" title="Column" size="10"
-						       value="" placeholder="column_name">
+						       value="" placeholder="column_name" required>
 					</td>
 					<td><!-- column type -->
 						<select class="field_type form-control" name="field_type_<?php echo $i ?>"
 						        id="field_type_<?php echo $i ?>" data-column="<?php echo $i ?>">
 							<option
 								title="A 4-byte integer, signed range is -2,147,483,648 to 2,147,483,647, unsigned range is 0 to 4,294,967,295">
-								INT
+								int
 							</option>
 							<option
-								title="A variable-length (0-65,535) string, the effective maximum length is subject to the maximum row size">
-								VARCHAR
+								title="A string with a length of 255 bytes, the effective maximum length is subject to the maximum row size">
+								varchar(255)
 							</option>
 							<option
-								title="A TEXT column with a maximum length of 65,535 (2^16 - 1) characters, stored with a two-byte prefix indicating the length of the value in bytes">
-								TEXT
+								title="A TEXT column with a maximum length of 4,294,967,295 or 4GiB (2^32 - 1) characters, stored with a four-byte prefix indicating the length of the value in bytes">
+								longtext
 							</option>
-							<option title="A date, supported range is 1000-01-01 to 9999-<12-31">DATE</option>
+							<option title="A date, supported range is 1000-01-01 to 9999-<12-31">
+								date
+							</option>
 						</select>
 					</td>
 					<td><!-- column default -->
@@ -150,7 +153,7 @@ if ( ! current_user_can( 'manage_database' ) ) {
 			<strong><?php _e( 'Separate Multiple Statements With A New Line', 'd2t' ); ?></strong><br/>
 		</div>
 		<form id="sql-statement-form">
-			<?php wp_nonce_field( 'd2t_run_sql_statement' ); ?>
+			<?php wp_nonce_field( 'd2t_create_sql_statement' ); ?>
 			<div class="form-group">
 					<textarea rows="10" name="sql_statement" id="sql_statement" class="form-control" dir="ltr"
 					          placeholder="CREATE TABLE table_name ..."></textarea>
