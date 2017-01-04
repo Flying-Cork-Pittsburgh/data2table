@@ -52,3 +52,8 @@ p.info {
 #meta-data{
     margin-bottom: 20px;
 }
+
+#table_name{
+    width: 200px;
+    border-radius: .25rem;
+}
