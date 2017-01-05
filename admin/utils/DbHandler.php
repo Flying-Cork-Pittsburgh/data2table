@@ -34,7 +34,9 @@ class D2T_DbHandler {
 		global $wpdb;
 		// Value of Database var: `lower_case_table_names`
 		$this->is_lower_case_table_names = count( $wpdb->get_row( "SHOW VARIABLES WHERE 
-			variable_name = 'lower_case_table_names' AND value = '1';" ) ) > 0;
+			variable_name = 'lower_case_table_names' AND value = '1';"
+			)
+		                                   ) > 0;
 	}
 
 	/**
@@ -81,15 +83,15 @@ class D2T_DbHandler {
 		       . $values['table_name']
 		       . ' ('
 		       . 'id int NOT NULL AUTO_INCREMENT';
-		foreach ( $values['columns'] as $column )
-		{
+		foreach ( $values['columns'] as $column ) {
 			$sql .= ', ' . $column['name'];
 			$sql .= ' ' . $column['type'];
-			$sql .= ($column['default'] == '') ? '' : ' ' . $column['default'];
-			$sql .= ($column['constraint'] == '') ? '' : ' ' . $column['constraint'];
+			$sql .= ( $column['default'] == '' ) ? '' : ' ' . $column['default'];
+			$sql .= ( $column['constraint'] == '' ) ? '' : ' ' . $column['constraint'];
 		}
 		$sql .= ', ' . 'PRIMARY KEY (id)';
 		$sql .= ' );';
+
 		return $sql;
 	}
 
