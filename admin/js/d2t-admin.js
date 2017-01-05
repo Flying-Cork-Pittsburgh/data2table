@@ -161,15 +161,12 @@
                     $('#sql_from_creator').fadeIn("slow");
                     submit_button.hide();
                     $('#submit-from-creator').show();
-                    submit_button.val('Create SQL');
-                    submit_button.prop("disabled", false)
                 } else {
                     alert_danger.find('.message').text(text);
                     alert_danger.fadeIn("slow");
-                    submit_button.val('Create SQL');
-                    submit_button.prop("disabled", false)
                 }
-
+                submit_button.val('Create SQL');
+                submit_button.prop("disabled", false)
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 alert_danger.find('.message').text(errorThrown);
