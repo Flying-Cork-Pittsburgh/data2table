@@ -56,6 +56,9 @@
         }
         var submit_button = $('#' + sql_target);
         var submit_button_val = submit_button.val();
+        var alert_danger = $('.alert-danger');
+        var alert_success = $('.alert-success');
+
         $.ajax({
             url: ajaxurl,  // this is part of the JS object you pass in from wp_localize_scripts.
             type: 'post',        // 'get' or 'post', override for form's 'method' attribute
@@ -76,13 +79,13 @@
             success: function (result) {
                 var text = result.data;
                 if (result.success) {
-                    $('.alert-success').find('.message').text(text);
-                    $('.alert-success').fadeIn("slow");
+                    alert_success.find('.message').text(text);
+                    alert_success.fadeIn("slow");
                     submit_button.val(submit_button_val);
                     submit_button.prop("disabled", false)
                 } else {
-                    $('.alert-danger').find('.message').text(text);
-                    $('.alert-danger').fadeIn("slow");
+                    alert_danger.find('.message').text(text);
+                    alert_danger.fadeIn("slow");
 
                     if (submit_button.selector == '#submit-from-creator') {
                         submit_button.hide();
@@ -95,8 +98,8 @@
 
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
-                $('.alert-danger').find('.message').text(errorThrown);
-                $('.alert-danger').fadeIn("slow");
+                alert_danger.find('.message').text(errorThrown);
+                alert_danger.fadeIn("slow");
             }
         });
 
@@ -131,6 +134,7 @@
             }
         });
 
+        var alert_danger = $('.alert-danger');
         var submit_button = $(this);
         $.ajax({
             url: ajaxurl,  // this is part of the JS object you pass in from wp_localize_scripts.
@@ -160,16 +164,16 @@
                     submit_button.val('Create SQL');
                     submit_button.prop("disabled", false)
                 } else {
-                    $('.alert-danger').find('.message').text(text);
-                    $('.alert-danger').fadeIn("slow");
+                    alert_danger.find('.message').text(text);
+                    alert_danger.fadeIn("slow");
                     submit_button.val('Create SQL');
                     submit_button.prop("disabled", false)
                 }
 
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
-                $('.alert-danger').find('.message').text(errorThrown);
-                $('.alert-danger').fadeIn("slow");
+                alert_danger.find('.message').text(errorThrown);
+                alert_danger.fadeIn("slow");
             }
         });
     });
