@@ -178,6 +178,8 @@ class D2T_Admin {
 		 */
 
 		wp_enqueue_script( $this->d2t, plugin_dir_url( __FILE__ ) . 'js/d2t-admin.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->d2t + '-ajax-requests', plugin_dir_url( __FILE__ ) . 'js/ajax-requests.js',
+			array( 'jquery' ), $this->version, false );
 		// Bootstrap
 		wp_register_script( 'prefix_bootstrap', plugin_dir_url( __FILE__ ) . 'js/bootstrap.min.js' );
 		wp_enqueue_script( 'prefix_bootstrap' );
@@ -185,7 +187,7 @@ class D2T_Admin {
 
 	public function enqueue_ajax_sql_submission() {
 		global $wp_query;
-		wp_localize_script( 'd2t-admin', 'd2t_run_sql_statement',
+		wp_localize_script( 'ajax-requests', 'd2t_run_sql_statement',
 			array(
 				'ajaxurl'    => admin_url( 'admin-ajax.php' ),
 				//url for php file that process ajax request to WP
@@ -195,7 +197,7 @@ class D2T_Admin {
 			)
 		);
 
-		wp_localize_script( 'd2t-admin', 'd2t_create_sql_statement',
+		wp_localize_script( 'ajax-requests', 'd2t_create_sql_statement',
 			array(
 				'ajaxurl'    => admin_url( 'admin-ajax.php' ),
 				//url for php file that process ajax request to WP
