@@ -36,7 +36,7 @@ if ( ! current_user_can( 'manage_database' ) ) {
 	<div id="tab-gui" class="tab-content current" role="form">
 		<div id="meta-data">
 			<input type="text" id="table_name" size="40" maxlength="64" value=""
-			       placeholder="table_name" autofocus="" required/>
+			       placeholder="table_name" autofocus="" required class="form-control required-input"/>
 		</div>
 
 		<table id="columns" class="table table-striped">
@@ -113,7 +113,7 @@ if ( ! current_user_can( 'manage_database' ) ) {
 					       name="submit-from-creator" style="display: none;"
 					       value="<?php _e( 'Submit SQL', 'd2t' ); ?>"/>
 					<input type="button" id="clear-sql-from-creator" class="clear-input btn btn-default"
-					       name="cancel_creator"
+					       name="cancel_creator" disabled
 					       value="<?php _e( 'Cancel', 'd2t' ); ?>"/>
 				</div>
 			</div>

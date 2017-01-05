@@ -9,9 +9,23 @@
 
         $('ul.tabs li').removeClass('current');
         $('.tab-content').removeClass('current');
+        $('.tab-content').children('.has-danger').each(function () {
+            $(this).removeClass('has-danger').children('.has-danger').each(function () {
+                $(this).removeClass('form-control-danger');
+            });
+        });
 
         $(this).addClass('current');
         $("#" + tab_id).addClass('current');
+    });
+
+    $(document).on('blur', '.required-input', function () {
+        var current_input  = $(this);
+        if(current_input.val().length == 0){
+            current_input.addClass('form-control-danger').parent().addClass('has-danger');
+        }else{
+            current_input.removeClass('form-control-danger').parent().removeClass('has-danger');
+        }
     });
 
     // delete last column on button click
@@ -25,7 +39,6 @@
         new_column.replaceWith();
         new_column.find('input').val('');
         new_column.find("input[type='checkbox']").prop('checked', false);
-        ;
         new_column.find('select option:first').select();
         last_column.after(new_column);
     });
@@ -157,14 +170,13 @@
                     $('#sql_from_creator').fadeIn("slow");
                     submit_button.hide();
                     $('#submit-from-creator').show();
-                    submit_button.val('Create SQL');
-                    submit_button.prop("disabled", false)
                 } else {
                     $('.alert-danger').find('.message').text(text);
                     $('.alert-danger').fadeIn("slow");
-                    submit_button.val('Create SQL');
-                    submit_button.prop("disabled", false)
                 }
+                submit_button.val('Create SQL');
+                submit_button.prop("disabled", false);
+                $('.clear-input').prop("disabled", false)
 
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
