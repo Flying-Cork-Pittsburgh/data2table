@@ -65,3 +65,6 @@ p.info {
 #table-actions{
     float: right;
 }
+.card{
+    padding: 0;
+}

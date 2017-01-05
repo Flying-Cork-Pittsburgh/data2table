@@ -25,5 +25,89 @@ if ( ! current_user_can( 'manage_database' ) ) {
 }
 ?>
 <div class="wrap">
+	<h3>Dashboard</h3>
+	<div class="card-columns">
+		<div class="card">
+			<h4 class="card-header">table_name</h4>
+			<div class="card-block">
+				<p class="card-text">324 Rows - 1324MB</p>
+			</div>
+			<ul class="list-group list-group-flush">
+				<li class="list-group-item">id (int)</li>
+				<li class="list-group-item">name (varchar)</li>
+				<li class="list-group-item">data (longtext)</li>
+			</ul>
+			<a href="#" class="btn btn-info btn-block">Manage</a>
+		</div>
+		<div class="card">
+			<h4 class="card-header">table_name</h4>
+			<div class="card-block">
+				<p class="card-text">324 Rows - 1324MB</p>
+			</div>
+			<ul class="list-group list-group-flush">
+				<li class="list-group-item">id (int)</li>
+				<li class="list-group-item">name (varchar)</li>
+				<li class="list-group-item">data (longtext)</li>
+			</ul>
+			<a href="#" class="btn btn-info btn-block">Manage</a>
+		</div>
+		<div class="card">
+			<h4 class="card-header">table_name</h4>
+			<div class="card-block">
+				<p class="card-text">324 Rows - 1324MB</p>
+			</div>
+			<ul class="list-group list-group-flush">
+				<li class="list-group-item">id (int)</li>
+				<li class="list-group-item">name (varchar)</li>
+				<li class="list-group-item">data (longtext)</li>
+				<li class="list-group-item">id (int)</li>
+				<li class="list-group-item">name (varchar)</li>
+				<li class="list-group-item">data (longtext)</li>
+			</ul>
+			<a href="#" class="btn btn-info btn-block">Manage</a>
+		</div>
+		<div class="card">
+			<h4 class="card-header">table_name</h4>
+			<div class="card-block">
+				<p class="card-text">324 Rows - 1324MB</p>
+			</div>
+			<ul class="list-group list-group-flush">
+				<li class="list-group-item">id (int)</li>
+				<li class="list-group-item">name (varchar)</li>
+				<li class="list-group-item">data (longtext)</li>
+				<li class="list-group-item">id (int)</li>
+				<li class="list-group-item">name (varchar)</li>
+				<li class="list-group-item">data (longtext)</li>
+			</ul>
+			<a href="#" class="btn btn-info btn-block">Manage</a>
+		</div>
+		<div class="card">
+			<h4 class="card-header">table_name</h4>
+			<div class="card-block">
+				<p class="card-text">324 Rows - 1324MB</p>
+			</div>
+			<ul class="list-group list-group-flush">
+				<li class="list-group-item">id (int)</li>
+				<li class="list-group-item">name (varchar)</li>
+				<li class="list-group-item">data (longtext)</li>
+			</ul>
+			<a href="#" class="btn btn-info btn-block">Manage</a>
+		</div>
+		<div class="card">
+			<h4 class="card-header">table_name</h4>
+			<div class="card-block">
+				<p class="card-text">324 Rows - 1324MB</p>
+			</div>
+			<ul class="list-group list-group-flush">
+				<li class="list-group-item">id (int)</li>
+				<li class="list-group-item">name (varchar)</li>
+				<li class="list-group-item">data (longtext)</li>
+				<li class="list-group-item">id (int)</li>
+				<li class="list-group-item">name (varchar)</li>
+				<li class="list-group-item">data (longtext)</li>
+			</ul>
+			<a href="#" class="btn btn-info btn-block">Manage</a>
+		</div>
+	</div>
 
 </div>

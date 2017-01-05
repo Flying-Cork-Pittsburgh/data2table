@@ -25,11 +25,11 @@ if ( ! current_user_can( 'manage_database' ) ) {
 }
 ?>
 <div class="wrap">
-
+	<h3>Create Table</h3>
 	<?php include_once 'partials/alerts_inc.php' ?>
 
 	<ul class="tabs">
-		<li class="tab-link current" data-tab="tab-gui"><?php _e( 'Create Table', 'd2t' ); ?></li>
+		<li class="tab-link current" data-tab="tab-gui"><?php _e( 'Creator', 'd2t' ); ?></li>
 		<li class="tab-link" data-tab="tab-sql"><?php _e( 'SQL Editor', 'd2t' ); ?></li>
 	</ul>
 
