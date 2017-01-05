@@ -32,11 +32,9 @@ class D2T_DbHandler {
 
 	public function __construct() {
 		global $wpdb;
-		// Value of Database var: `lower_case_table_names`)
-		$this->db_is_lower_case = boolval( array_column(
-			$wpdb->get_results( "SHOW VARIABLES WHERE variable_name = 'lower_case_table_names';",
-				'ARRAY_A' ), 'Value' ) );
-
+		// Value of Database var: `lower_case_table_names`
+		$this->is_lower_case_table_names = count( $wpdb->get_row( "SHOW VARIABLES WHERE 
+			variable_name = 'lower_case_table_names' AND value = '1';" ) ) > 0;
 	}
 
 	/**
@@ -56,15 +54,43 @@ class D2T_DbHandler {
 				//https://codex.wordpress.org/Creating_Tables_with_Plugins#Creating_or_Updating_the_Table
 				require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 				dbDelta( $sql );
+				if ( ! $wpdb->result ) {
+					$message = __( 'Failed to create table. The SQL Statement was not valid.', $this->d2t );
+					throw new Exception( $message );
+				}
 				$wpdb->flush();
 
-				// returns always false
 				return $this->check_table_exists( $this->get_table_name_from_sql( $sql ) );
 			}
 		}
-		error_log( __( 'Failed to create table.', $this->d2t ), 0, plugin_dir_path( __FILE__ ) );
+		$message = __( 'Failed to create table. The SQL Statement was not given/valid.', $this->d2t );
+		throw new Exception( $message );
+	}
 
-		return false;
+	/**
+	 * Builds a sql statement from values which are given as a json object
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $values JSON Object which contains values for table to create
+	 *
+	 * @return String
+	 */
+	public function build_sql_statement( $values = null ) {
+		$sql = 'CREATE TABLE' . ' '
+		       . $values['table_name']
+		       . ' ('
+		       . 'id int NOT NULL AUTO_INCREMENT';
+		foreach ( $values['columns'] as $column )
+		{
+			$sql .= ', ' . $column['name'];
+			$sql .= ' ' . $column['type'];
+			$sql .= ($column['default'] == '') ? '' : ' ' . $column['default'];
+			$sql .= ($column['constraint'] == '') ? '' : ' ' . $column['constraint'];
+		}
+		$sql .= ', ' . 'PRIMARY KEY (id)';
+		$sql .= ' );';
+		return $sql;
 	}
 
 	/**
@@ -77,21 +103,17 @@ class D2T_DbHandler {
 	 * @return boolean
 	 */
 	public function sql_statement_is_valid( $sql = null ) {
-		$message = '';
 
-		if ( preg_match( '/(?i)(create table)( if exists)?/', $sql )  // it should be a "create table" statement
+		if ( preg_match( '/(?i)(create table)( if exists)?/', $sql )  // should start with a "create table" statement
 		     &&
-		     ! $this->check_table_exists( $this->get_table_name_from_sql( $sql ) )
+		     preg_match( '/(\)\;)$/', $sql ) // statement should end with ');'
 		) {
-
-			return true;
-		} else {
-			$message = __( 'Can not create a table because the table name already exists, or it is no valid statement.',
-				$this->d2t );
-			error_log( $message, 0, plugin_dir_path( __FILE__ ) );
-
-			return false;
+			if ( ! $this->check_table_exists( $this->get_table_name_from_sql( $sql ) ) ) {
+				return true;
+			}
 		}
+		$message = __( 'Can not create a table because the table name already exists, or it is no valid statement.', $this->d2t );
+		throw new Exception( $message );
 	}
 
 	/**
@@ -122,14 +144,13 @@ class D2T_DbHandler {
 		global $wpdb;
 
 		if ( empty( $table_name ) ) {
-			error_log( __( 'Table name is empty.', $this->d2t ), 0, plugin_dir_path( __FILE__ ) );
-
-			return false;
+			$message = __( 'Table name is empty.', $this->d2t );
+			throw new Exception( $message );
 		}
 
-		$table_name = $this->is_lower_case_table_names ? strtolower( $table_name ) : $table_name;
-		$result     = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", strtolower( $table_name ) ) );
+		$valid_table_name = $this->is_lower_case_table_names ? strtolower( $table_name ) : $table_name;
+		$result           = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $valid_table_name ) );
 
-		return strcmp( $table_name, $result );
+		return $valid_table_name === $result;
 	}
 }

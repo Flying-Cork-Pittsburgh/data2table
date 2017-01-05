@@ -30,19 +30,19 @@ if ( ! defined( 'WPINC' ) ) {
 
 /**
  * The code that runs during plugin activation.
- * This action is documented in includes/class-d2t-activator.php
+ * This action is documented in includes/activator.php
  */
 function activate_d2t() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-d2t-activator.php';
+	require_once plugin_dir_path( __FILE__ ) . 'includes/activator.php';
 	D2T_Activator::activate();
 }
 
 /**
  * The code that runs during plugin deactivation.
- * This action is documented in includes/class-d2t-deactivator.php
+ * This action is documented in includes/deactivator.php
  */
 function deactivate_d2t() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-d2t-deactivator.php';
+	require_once plugin_dir_path( __FILE__ ) . 'includes/deactivator.php';
 	D2T_Deactivator::deactivate();
 }
 
@@ -53,7 +53,7 @@ register_deactivation_hook( __FILE__, 'deactivate_d2t' );
  * The core plugin class that is used to define internationalization,
  * admin-specific hooks, and public-facing site hooks.
  */
-require plugin_dir_path( __FILE__ ) . 'includes/class-d2t.php';
+require plugin_dir_path( __FILE__ ) . 'includes/d2t-class.php';
 
 /**
  * Begins execution of the plugin.
