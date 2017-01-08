@@ -52,7 +52,7 @@ if ( ! current_user_can( 'manage_database' ) ) {
 				<td><input value="id" disabled class="field_type form-control"></td>
 				<td><input value="int" disabled class="field_type form-control"></td>
 				<td><input value="AUTO_INCREMENT" disabled class="field_type form-control"></td>
-				<td><input type="checkbox" disabled class="field_type form-check"></td>
+				<td><input type="checkbox" checked disabled class="field_type form-check"></td>
 				<td><input type="checkbox" checked disabled class="field_type form-check"></td>
 			</tr>
 

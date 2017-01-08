@@ -78,6 +78,17 @@ class D2T_Admin {
 	}
 
 	/**
+	 * provides all tables which are not part of the Host-System
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array
+	 */
+	public function get_custom_tables() {
+		return $this->db->get_tables();
+	}
+
+	/**
 	 * handles ajax request: create table
 	 *
 	 * @since 1.0.0

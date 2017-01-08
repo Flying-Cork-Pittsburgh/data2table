@@ -3,6 +3,9 @@
  * included in this file.
  */
 
+.wrap h3 {
+    margin-bottom: 2.5rem;
+}
 ul.tabs {
     margin: 0;
     padding: 0;
