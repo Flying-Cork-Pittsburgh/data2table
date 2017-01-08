@@ -78,6 +78,17 @@ class D2T_Admin {
 	}
 
 	/**
+	 * provides all tables which are not part of the Host-System
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array
+	 */
+	public function get_custom_tables() {
+		return $this->db->get_tables();
+	}
+
+	/**
 	 * handles ajax request: create table
 	 *
 	 * @since 1.0.0
@@ -119,18 +130,30 @@ class D2T_Admin {
 	 */
 	public function d2t_admin_menu() {
 		add_menu_page(
-			$this->name,                         // page title
+			$this->name,                          // page title
 			$this->name,                         // menu title
 			// Change the capability to make the pages visible for other users
 			'manage_database',                // capability
-			$this->d2t,                         // menu slug
+			$this->d2t . '-dashboard',                         // menu slug
 			function () {
-				require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/views/create-table.php';
+				require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/views/dashboard.php';
 
 			},              // callback function
 			'dashicons-list-view',
 			'3.5'                           // better decimal to avoid overwriting
 		);
+
+		add_submenu_page(
+			$this->d2t . '-dashboard',
+			__('new Table', $this->d2t),
+			__('new Table', $this->d2t),
+			'manage_database',
+			$this->d2t .'-new-table',
+			function () {
+				require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/views/create-table.php';
+			}
+			);
+
 	}
 
 	/**

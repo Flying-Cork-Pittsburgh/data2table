@@ -96,6 +96,53 @@ class D2T_DbHandler {
 	}
 
 	/**
+	 * provides all tables which are not part of the Wordpress-System
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array
+	 */
+	public function get_tables() {
+		global $wpdb;
+		$result_set = array();
+		$sql = 'SELECT TABLE_NAME, TABLE_ROWS, UPDATE_TIME FROM INFORMATION_SCHEMA.TABLES' .
+		       ' WHERE TABLE_TYPE = \'BASE TABLE\' AND TABLE_SCHEMA=' . '\'' . $wpdb->dbname . '\'';
+
+		$tables = $wpdb->get_results( $sql );
+		foreach ( $tables as $table ) {
+			$table_name = $table->TABLE_NAME;
+			if(!preg_match('/(?<!prefix )' . $wpdb->prefix . '/', $table_name)){
+				$result_set[$table_name]['row_count'] = $table->TABLE_ROWS;
+				$result_set[$table_name]['last_updated'] =
+					(strlen($table->UPDATE_TIME) < 1 ? '-' : $table->UPDATE_TIME ) ;
+				$result_set[$table_name]['columns'] = $this->get_columns($table_name);
+
+			}
+		}
+		return $result_set;
+	}
+
+	/**
+	 * provides all column names and types of a given table name
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $table_name table name to describe
+	 *
+	 * @return array
+	 */
+	private function get_columns( $table_name ){
+		global $wpdb;
+		$columns = $wpdb->get_results( 'DESCRIBE ' . $table_name . ';' );
+
+		$result_set = [];
+		foreach ( $columns as $column ) {
+			$result_set[] = array('field'=>$column->Field, 'type'=>$column->Type);
+		}
+		return $result_set;
+	}
+
+	/**
 	 * validate sql statement
 	 *
 	 * @since 1.0.0
@@ -104,7 +151,7 @@ class D2T_DbHandler {
 	 *
 	 * @return boolean
 	 */
-	public function sql_statement_is_valid( $sql = null ) {
+	private function sql_statement_is_valid( $sql = null ) {
 
 		if ( preg_match( '/(?i)(create table)( if exists)?/', $sql )  // should start with a "create table" statement
 		     &&
@@ -127,7 +174,7 @@ class D2T_DbHandler {
 	 *
 	 * @return String
 	 */
-	public function get_table_name_from_sql( $sql ) {
+	private function get_table_name_from_sql( $sql ) {
 		preg_match( '/(?i)(create table)( if exists)?\s(?<tableName>[^\s]+)/', $sql, $result );
 
 		return $result['tableName'];
@@ -142,7 +189,7 @@ class D2T_DbHandler {
 	 *
 	 * @return boolean
 	 */
-	public function check_table_exists( $table_name = null ) {
+	private function check_table_exists( $table_name = null ) {
 		global $wpdb;
 
 		if ( empty( $table_name ) ) {
@@ -155,4 +202,5 @@ class D2T_DbHandler {
 
 		return $valid_table_name === $result;
 	}
+
 }
