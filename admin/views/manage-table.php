@@ -22,22 +22,22 @@
 <?php
 if ( ! current_user_can( 'manage_database' ) ) {
 	wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
-}elseif(!isset($_REQUEST['table'])){
+} elseif ( ! isset( $_REQUEST['table'] ) ) {
 	wp_die( __( 'Please go back to the dashboard and select a table to manage.' ) );
 }
 
-$table_name = $_REQUEST['table'] ;
-$table = $this->get_data_table($table_name);
+$table_name = $_REQUEST['table'];
+$table      = $this->get_data_table( $table_name );
 ?>
-	<div class="wrap">
-		<h3><a name="top"><?php echo $table_name ?></a></h3>
-		<?php include_once 'partials/alerts_inc.php' ?>
+<div class="wrap">
+	<h3><a name="top"><?php echo $table_name ?></a></h3>
+	<?php include_once 'partials/alerts_inc.php' ?>
 
-		<!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->
-		<form id="table-items" method="get">
-			<!-- For plugins, we also need to ensure that the form posts back to our current page -->
-			<input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
-			<!-- Now we can render the completed list table -->
-			<?php $table->display() ?>
-		</form>
-	</div>
+	<!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->
+	<form id="table-items" method="get">
+		<!-- For plugins, we also need to ensure that the form posts back to our current page -->
+		<input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>"/>
+		<!-- Now we can render the completed list table -->
+		<?php $table->display() ?>
+	</form>
+</div>

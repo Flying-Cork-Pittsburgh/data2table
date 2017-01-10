@@ -49,8 +49,8 @@ class D2T_DataTable extends List_Table {
 		$this->properties     = $this->db->get_columns( $this->table_name );
 		$this->property_names = array();
 
-		for ( $i = 0; $i < sizeof( $this->properties); $i ++ ) {
-			$this->property_names[$i] = $this->properties[$i]['field'];
+		for ( $i = 0; $i < sizeof( $this->properties ); $i ++ ) {
+			$this->property_names[ $i ] = $this->properties[ $i ]['field'];
 		}
 
 		parent::__construct( array(
@@ -76,7 +76,7 @@ class D2T_DataTable extends List_Table {
 			),
 		);
 
-		return 	$this->row_actions( $actions );
+		return $this->row_actions( $actions );
 	}
 
 	function get_columns() {
@@ -107,7 +107,7 @@ class D2T_DataTable extends List_Table {
 			$this->pagination( $which );
 			?>
 
-			<br class="clear" />
+			<br class="clear"/>
 		</div>
 		<?php
 	}
@@ -130,7 +130,8 @@ class D2T_DataTable extends List_Table {
 		// prepare query params, as usual current page, order by and order direction
 		$paged   = isset( $_REQUEST['paged'] ) ? max( 0, intval( $_REQUEST['paged'] - 1 ) * $per_page ) : 0;
 		$orderby = ( isset( $_REQUEST['orderby'] ) && in_array( $_REQUEST['orderby'],
-				array_keys( $this->get_sortable_columns() ) ) ) ? $_REQUEST['orderby'] : 'id ';
+				array_keys( $this->get_sortable_columns() )
+			) ) ? $_REQUEST['orderby'] : 'id ';
 		$order   = ( isset( $_REQUEST['order'] ) && in_array( $_REQUEST['order'], array(
 					'asc',
 					'desc'
@@ -140,7 +141,9 @@ class D2T_DataTable extends List_Table {
 		// [REQUIRED] define $items array
 		// notice that last argument is ARRAY_A, so we will retrieve array
 		$this->items = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . $this->table_name . ' ORDER BY '
-		. $orderby .' '. $order . ' LIMIT %d OFFSET %d', $per_page, $paged ), ARRAY_A );
+		                                                   . $orderby . ' ' . $order . ' LIMIT %d OFFSET %d', $per_page, $paged
+		), ARRAY_A
+		);
 
 		// [REQUIRED] configure pagination
 		$this->set_pagination_args( array(
