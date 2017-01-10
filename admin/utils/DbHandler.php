@@ -131,7 +131,7 @@ class D2T_DbHandler {
 	 *
 	 * @return array
 	 */
-	private function get_columns( $table_name ){
+	public function get_columns( $table_name ){
 		global $wpdb;
 		$columns = $wpdb->get_results( 'DESCRIBE ' . $table_name . ';' );
 
@@ -152,9 +152,10 @@ class D2T_DbHandler {
 	 * @return array
 	 */
 	public function get_data( $table_name ){
-		$result_set = [];
+		global $wpdb;
 		if($this->check_table_exists($table_name)){
-			return $result_set;
+			$results = $wpdb->get_results( 'SELECT * FROM '. $table_name , ARRAY_A);
+			return  $results;
 		}
 		throw new Exception( 'Table ' . $table_name . ' does not exists.' );
 	}

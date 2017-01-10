@@ -11,3 +11,4 @@ You find a [list of features here] (https://github.com/anjakammer/data2table/lab
 
 ## Ressources and Libraries
 - [Wordpress Plugin Boilerplate] (http://wppb.io/)
+- [How to build WP data tables] (https://wordpress.org/plugins/custom-list-table-example/)
