@@ -89,6 +89,23 @@ class D2T_Admin {
 	}
 
 	/**
+	 * provides all tables which are not part of the Host-System
+	 *
+	 * @since 1.0.
+	 *
+	 * @param string $table_name table name to fetch the data from
+	 *
+	 * @return array
+	 */
+	public function get_data_table( $table_name ) {
+		try{
+			return $this->db->get_data($table_name);
+		}catch(Exception $e){
+			return array();
+		}
+	}
+
+	/**
 	 * handles ajax request: create table
 	 *
 	 * @since 1.0.0
@@ -153,6 +170,17 @@ class D2T_Admin {
 				require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/views/create-table.php';
 			}
 			);
+		add_submenu_page(
+			null,
+			__('manage Table', $this->d2t),
+			__('manage Table', $this->d2t),
+			'manage_database',
+			$this->d2t .'-manage-table',
+			function () {
+				require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/views/manage-table.php';
+			}
+		);
+
 
 	}
 

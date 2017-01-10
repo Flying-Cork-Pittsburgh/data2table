@@ -143,6 +143,23 @@ class D2T_DbHandler {
 	}
 
 	/**
+	 * provides all column names and types of a given table name
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $table_name table name to fetch the data from
+	 *
+	 * @return array
+	 */
+	public function get_data( $table_name ){
+		$result_set = [];
+		if($this->check_table_exists($table_name)){
+			return $result_set;
+		}
+		throw new Exception( 'Table ' . $table_name . ' does not exists.' );
+	}
+
+	/**
 	 * validate sql statement
 	 *
 	 * @since 1.0.0
@@ -161,8 +178,9 @@ class D2T_DbHandler {
 				return true;
 			}
 		}
-		$message = __( 'Can not create a table because the table name already exists, or it is no valid statement.', $this->d2t );
-		throw new Exception( $message );
+		throw new Exception(
+			'Can not create a table because the table name already exists, or it is no valid statement.'
+		);
 	}
 
 	/**
