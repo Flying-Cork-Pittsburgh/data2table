@@ -103,7 +103,7 @@ class D2T_Admin {
 	public function get_data_table( $table_name ) {
 
 		$data_table = new D2T_DataTable($table_name, $this->db);
-		$data_table->prepare_items();
+		add_action('wp_ajax__ajax_fetch_custom_list', $data_table->_ajax_fetch_custom_list_callback());
 		return $data_table;
 //		try{
 //			return $this->db->get_data($table_name);
