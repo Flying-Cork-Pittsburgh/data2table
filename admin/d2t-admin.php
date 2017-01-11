@@ -59,6 +59,15 @@ class D2T_Admin {
 	protected $db;
 
 	/**
+	 * The Data Importer which handles imports and validation.
+	 *
+	 * @since    1.0.0
+	 * @access   protected
+	 * @var      D2T_DataImporter $importer handles imports and validation
+	 */
+	protected $importer;
+
+	/**
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
@@ -74,6 +83,9 @@ class D2T_Admin {
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/utils/DbHandler.php';
 		$this->db = new D2T_DbHandler();
+
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/utils/DataImporter.php';
+		$this->importer = new D2T_DataImporter($this->db);
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/utils/ListTable.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/utils/DataTable.php';
@@ -102,8 +114,9 @@ class D2T_Admin {
 	 */
 	public function get_data_table( $table_name ) {
 
-		$data_table = new D2T_DataTable($table_name, $this->db);
+		$data_table = new D2T_DataTable( $table_name, $this->db );
 		$data_table->prepare_items();
+
 		return $data_table;
 //		try{
 //			return $this->db->get_data($table_name);
@@ -113,20 +126,48 @@ class D2T_Admin {
 	}
 
 	/**
+	 * handles ajax request: validate data
+	 *
+	 * @since 1.0.0
+	 *
+	 */
+	public function ajax_test_import_file() {
+		// TODO upload file
+		// file ulpoad options
+		if ( ! isset( $_FILES["FileInput"] ) ) {
+			echo wp_send_json_error( 'No file was uploaded.' );
+		} else {
+			$file       = $_FILES["FileInput"];
+			$table_name = $_POST['table_name'] ;
+			try {
+				$this->importer->validate_data( $file, $table_name );
+			} catch ( Exception $e ) {
+				echo wp_send_json_error( $e->getMessage() );
+			}
+			echo wp_send_json_success(
+				__( 'Upload was successfully. Please check the preview and hit import if all is fine',
+					$this->d2t
+				)
+			);
+		}
+	}
+
+	/**
 	 * handles ajax request: create table
 	 *
 	 * @since 1.0.0
 	 *
 	 */
-	public function ajax_create_table() {
+	public
+	function ajax_create_table() {
 		$sql = ( $_POST['sql'] );
 
-		try{
+		try {
 			$this->db->create_table( $sql );
-		}catch (Exception $e){
-			echo wp_send_json_error($e->getMessage());
+		} catch ( Exception $e ) {
+			echo wp_send_json_error( $e->getMessage() );
 		}
-		echo wp_send_json_success(  __( 'Table successfully created', $this->d2t ) );
+		echo wp_send_json_success( __( 'Table successfully created', $this->d2t ) );
 	}
 
 	/**
@@ -135,14 +176,15 @@ class D2T_Admin {
 	 * @since 1.0.0
 	 *
 	 */
-	public function ajax_build_sql_statement() {
+	public
+	function ajax_build_sql_statement() {
 		$values = ( $_POST['values'] );
-		$sql = '';
+		$sql    = '';
 
-		try{
+		try {
 			$sql = $this->db->build_sql_statement( $values );
-		}catch (Exception $e){
-			echo wp_send_json_error($e->getMessage());
+		} catch ( Exception $e ) {
+			echo wp_send_json_error( $e->getMessage() );
 		}
 		echo wp_send_json_success( $sql );
 	}
@@ -152,7 +194,8 @@ class D2T_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-	public function d2t_admin_menu() {
+	public
+	function d2t_admin_menu() {
 		add_menu_page(
 			$this->name,                          // page title
 			$this->name,                         // menu title
@@ -169,20 +212,20 @@ class D2T_Admin {
 
 		add_submenu_page(
 			$this->d2t . '-dashboard',
-			__('new Table', $this->d2t),
-			__('new Table', $this->d2t),
+			__( 'new Table', $this->d2t ),
+			__( 'new Table', $this->d2t ),
 			'manage_database',
-			$this->d2t .'-new-table',
+			$this->d2t . '-new-table',
 			function () {
 				require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/views/create-table.php';
 			}
-			);
+		);
 		add_submenu_page(
 			null,
-			__('manage Table', $this->d2t),
-			__('manage Table', $this->d2t),
+			__( 'manage Table', $this->d2t ),
+			__( 'manage Table', $this->d2t ),
 			'manage_database',
-			$this->d2t .'-manage-table',
+			$this->d2t . '-manage-table',
 			function () {
 				require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/views/manage-table.php';
 			}
@@ -196,7 +239,8 @@ class D2T_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-	public function enqueue_styles() {
+	public
+	function enqueue_styles() {
 
 		/**
 		 * This function is provided for demonstration purposes only.
@@ -221,7 +265,8 @@ class D2T_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-	public function enqueue_scripts() {
+	public
+	function enqueue_scripts() {
 
 		/**
 		 * This function is provided for demonstration purposes only.
@@ -237,13 +282,15 @@ class D2T_Admin {
 
 		wp_enqueue_script( $this->d2t, plugin_dir_url( __FILE__ ) . 'js/d2t-admin.js', array( 'jquery' ), $this->version, false );
 		wp_enqueue_script( $this->d2t + '-ajax-requests', plugin_dir_url( __FILE__ ) . 'js/ajax-requests.js',
-			array( 'jquery' ), $this->version, false );
+			array( 'jquery' ), $this->version, false
+		);
 		// Bootstrap
 		wp_register_script( 'prefix_bootstrap', plugin_dir_url( __FILE__ ) . 'js/bootstrap.min.js' );
 		wp_enqueue_script( 'prefix_bootstrap' );
 	}
 
-	public function enqueue_ajax_sql_submission() {
+	public
+	function enqueue_ajax_sql_submission() {
 		global $wp_query;
 		wp_localize_script( 'ajax-requests', 'd2t_run_sql_statement',
 			array(
