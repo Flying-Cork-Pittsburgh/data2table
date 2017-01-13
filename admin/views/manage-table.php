@@ -47,7 +47,16 @@ $table      = $this->get_data_table( $table_name );
 			<?php $table->display() ?>
 		</form>
 	</div>
-	<div id="tab-import" class="tab-content" role="form">
+	<div id="tab-import" class="tab-content">
+
+		<h5>Upload</h5>
+
+		<form method="post" enctype="multipart/form-data" class="custom-file-upload">
+			<?php wp_nonce_field( 'd2t_upload_file' ); ?>
+			<input name="FileInput" id="FileInput" class="file-upload-input" accept=".csv,.txt" type="file"/>
+			<input type="submit" id="submit-btn" class="file-upload-button btn btn-default" value="Import to Database"/>
+		</form>
+		<div class="clear"></div>
 
 	</div>
 </div>

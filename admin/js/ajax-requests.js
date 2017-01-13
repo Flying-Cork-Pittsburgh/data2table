@@ -1,6 +1,6 @@
 (function ($) {
     'use strict';
-
+    $(document).ready(function () {
     /**
      *Ajax Request Handling
      */
@@ -134,6 +134,65 @@
             }
         });
     });
+
+    // upload file
+    $(".file-upload-button").click(function (event) {
+        event.preventDefault();
+        var alert_danger = $('.alert-danger');
+        var alert_success = $('.alert-success');
+        var submit_button = $(this);
+        var submit_button_val = submit_button.val();
+
+        submit_button.prop('disabled', true);
+        submit_button.val('please wait...');
+        alert_danger.hide();
+
+        var over = '<div id="overlay"><span id="loading">' +
+            '<p>Please wait while loading</p></span></div>';
+        $(over).appendTo('body');
+
+        var formData = new FormData();
+        formData.append('file', $('#FileInput')[0].files[0]);
+        formData.append('action', 'ajax_test_import_file');
+
+        $.ajax({
+            url: ajaxurl,  // this is part of the JS object you pass in from wp_localize_scripts.
+            type: 'post',        // 'get' or 'post', override for form's 'method' attribute
+            dataType: 'json',
+            cache: false,
+            contentType: false,
+            processData: false,
+            data: formData,
+            beforeSend: function () {
+                submit_button.val('Please wait ...');
+                submit_button.prop("disabled", true);
+                $('.alert').fadeOut("slow");
+            },
+            // use beforeSubmit to add your nonce to the form data before submitting.
+            beforeSubmit: function (arr, $form, options) {
+                arr.push({"name": "nonce", "value": d2t_upload_file.nonce});
+            },
+            success: function (result) {
+                var text = result.data;
+                if (result.success) {
+                    alert_success.find('.message').text(text);
+                    alert_success.fadeIn("slow");
+                    submit_button.val(submit_button_val);
+                    submit_button.prop("disabled", false)
+                } else {
+                    alert_danger.find('.message').text(text);
+                    alert_danger.fadeIn("slow");
+                    submit_button.val(submit_button_val);
+                    submit_button.prop("disabled", false);
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert_danger.find('.message').text(errorThrown);
+                alert_danger.fadeIn("slow");
+            }
+        });
+    });
+})
 
 })(jQuery);
 

@@ -133,14 +133,13 @@ class D2T_Admin {
 	 */
 	public function ajax_test_import_file() {
 		// TODO upload file
-		// file ulpoad options
-		if ( ! isset( $_FILES["FileInput"] ) ) {
+		if ( ! isset( $_FILES["file"] ) ) {
 			echo wp_send_json_error( 'No file was uploaded.' );
 		} else {
-			$file       = $_FILES["FileInput"];
+			$file       = $_FILES["file"];
 			$table_name = $_POST['table_name'] ;
 			try {
-				$this->importer->validate_data( $file, $table_name );
+				$this->importer->upload_file( $file, $table_name );
 			} catch ( Exception $e ) {
 				echo wp_send_json_error( $e->getMessage() );
 			}
@@ -307,6 +306,16 @@ class D2T_Admin {
 				'ajaxurl'    => admin_url( 'admin-ajax.php' ),
 				//url for php file that process ajax request to WP
 				'nonce'      => wp_create_nonce( "d2t_create_sql_statement" ),
+				// this is a unique token to prevent form hijacking
+				'query_vars' => json_encode( $wp_query->query )
+			)
+		);
+
+		wp_localize_script( 'ajax-requests', 'd2t_upload_file',
+			array(
+				'ajaxurl'    => admin_url( 'admin-ajax.php' ),
+				//url for php file that process ajax request to WP
+				'nonce'      => wp_create_nonce( "d2t_upload_file" ),
 				// this is a unique token to prevent form hijacking
 				'query_vars' => json_encode( $wp_query->query )
 			)
