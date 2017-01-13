@@ -75,6 +75,9 @@ class D2T_Admin {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/utils/DbHandler.php';
 		$this->db = new D2T_DbHandler();
 
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/utils/ListTable.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/utils/DataTable.php';
+
 	}
 
 	/**
@@ -86,6 +89,27 @@ class D2T_Admin {
 	 */
 	public function get_custom_tables() {
 		return $this->db->get_tables();
+	}
+
+	/**
+	 * returns a table object to display data
+	 *
+	 * @since 1.0.
+	 *
+	 * @param string $table_name table name to fetch the data from
+	 *
+	 * @return object
+	 */
+	public function get_data_table( $table_name ) {
+
+		$data_table = new D2T_DataTable($table_name, $this->db);
+		$data_table->prepare_items();
+		return $data_table;
+//		try{
+//			return $this->db->get_data($table_name);
+//		}catch(Exception $e){
+//			return array();
+//		}
 	}
 
 	/**
@@ -153,6 +177,17 @@ class D2T_Admin {
 				require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/views/create-table.php';
 			}
 			);
+		add_submenu_page(
+			null,
+			__('manage Table', $this->d2t),
+			__('manage Table', $this->d2t),
+			'manage_database',
+			$this->d2t .'-manage-table',
+			function () {
+				require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/views/manage-table.php';
+			}
+		);
+
 
 	}
 

@@ -131,7 +131,7 @@ class D2T_DbHandler {
 	 *
 	 * @return array
 	 */
-	private function get_columns( $table_name ){
+	public function get_columns( $table_name ){
 		global $wpdb;
 		$columns = $wpdb->get_results( 'DESCRIBE ' . $table_name . ';' );
 
@@ -140,6 +140,24 @@ class D2T_DbHandler {
 			$result_set[] = array('field'=>$column->Field, 'type'=>$column->Type);
 		}
 		return $result_set;
+	}
+
+	/**
+	 * provides all column names and types of a given table name
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $table_name table name to fetch the data from
+	 *
+	 * @return array
+	 */
+	public function get_data( $table_name ){
+		global $wpdb;
+		if($this->check_table_exists($table_name)){
+			$results = $wpdb->get_results( 'SELECT * FROM '. $table_name , ARRAY_A);
+			return  $results;
+		}
+		throw new Exception( 'Table ' . $table_name . ' does not exists.' );
 	}
 
 	/**
@@ -161,8 +179,9 @@ class D2T_DbHandler {
 				return true;
 			}
 		}
-		$message = __( 'Can not create a table because the table name already exists, or it is no valid statement.', $this->d2t );
-		throw new Exception( $message );
+		throw new Exception(
+			'Can not create a table because the table name already exists, or it is no valid statement.'
+		);
 	}
 
 	/**
