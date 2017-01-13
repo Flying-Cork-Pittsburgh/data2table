@@ -85,7 +85,7 @@ class D2T_Admin {
 		$this->db = new D2T_DbHandler();
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/utils/DataImporter.php';
-		$this->importer = new D2T_DataImporter($this->db);
+		$this->importer = new D2T_DataImporter( $this->db );
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/utils/ListTable.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/utils/DataTable.php';
@@ -113,42 +113,43 @@ class D2T_Admin {
 	 * @return object
 	 */
 	public function get_data_table( $table_name ) {
-
 		$data_table = new D2T_DataTable( $table_name, $this->db );
 		$data_table->prepare_items();
 
 		return $data_table;
-//		try{
-//			return $this->db->get_data($table_name);
-//		}catch(Exception $e){
-//			return array();
-//		}
 	}
 
 	/**
-	 * handles ajax request: validate data
+	 * handles ajax request: validate datam upload file and get preview of data
 	 *
 	 * @since 1.0.0
 	 *
 	 */
 	public function ajax_test_import_file() {
-		// TODO upload file
+		$preview             = array();
+		$property_difference = array();
 		if ( ! isset( $_FILES["file"] ) ) {
 			echo wp_send_json_error( 'No file was uploaded.' );
-		} else {
-			$file       = $_FILES["file"];
-			$table_name = $_POST['table_name'] ;
-			try {
-				$this->importer->upload_file( $file, $table_name );
-			} catch ( Exception $e ) {
-				echo wp_send_json_error( $e->getMessage() );
-			}
-			echo wp_send_json_success(
-				__( 'Upload was successfully. Please check the preview and hit "import Data" if all is fine',
-					$this->d2t
-				)
-			);
 		}
+		$file       = $_FILES["file"];
+		$table_name = $_POST['table_name'];
+		try {
+			$filepath            = $this->importer->upload_file( $file, $table_name );
+			$data                = $this->importer->get_file_data( $filepath );
+			$property_difference = $this->importer->get_property_difference( $data, $table_name );
+			$preview             = $this->importer->get_preview( $data, $table_name );
+		} catch ( Exception $e ) {
+			echo wp_send_json_error( $e->getMessage() );
+		}
+		echo wp_send_json_success(
+			$response = array(
+				"message"             => __( 'Upload was successfully. Please check the preview and hit "import Data" if all is fine',
+					$this->d2t
+				),
+				"property_difference" => $property_difference,
+				"data"                => $preview
+			)
+		);
 	}
 
 	/**
@@ -157,8 +158,7 @@ class D2T_Admin {
 	 * @since 1.0.0
 	 *
 	 */
-	public
-	function ajax_create_table() {
+	public function ajax_create_table() {
 		$sql = ( $_POST['sql'] );
 
 		try {
@@ -175,8 +175,7 @@ class D2T_Admin {
 	 * @since 1.0.0
 	 *
 	 */
-	public
-	function ajax_build_sql_statement() {
+	public function ajax_build_sql_statement() {
 		$values = ( $_POST['values'] );
 		$sql    = '';
 
@@ -193,8 +192,7 @@ class D2T_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-	public
-	function d2t_admin_menu() {
+	public function d2t_admin_menu() {
 		add_menu_page(
 			$this->name,                          // page title
 			$this->name,                         // menu title
@@ -238,8 +236,7 @@ class D2T_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-	public
-	function enqueue_styles() {
+	public function enqueue_styles() {
 
 		/**
 		 * This function is provided for demonstration purposes only.
@@ -264,8 +261,7 @@ class D2T_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-	public
-	function enqueue_scripts() {
+	public function enqueue_scripts() {
 
 		/**
 		 * This function is provided for demonstration purposes only.
@@ -288,8 +284,7 @@ class D2T_Admin {
 		wp_enqueue_script( 'prefix_bootstrap' );
 	}
 
-	public
-	function enqueue_ajax_sql_submission() {
+	public function enqueue_ajax_sql_submission() {
 		global $wp_query;
 		wp_localize_script( 'ajax-requests', 'd2t_run_sql_statement',
 			array(

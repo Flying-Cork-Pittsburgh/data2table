@@ -116,7 +116,6 @@ class D2T_DbHandler {
 				$result_set[$table_name]['last_updated'] =
 					(strlen($table->UPDATE_TIME) < 1 ? '-' : $table->UPDATE_TIME ) ;
 				$result_set[$table_name]['columns'] = $this->get_columns($table_name);
-
 			}
 		}
 		return $result_set;
@@ -143,6 +142,26 @@ class D2T_DbHandler {
 	}
 
 	/**
+	 * provides all column names only of a given table name
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $table_name table name to describe
+	 *
+	 * @return array
+	 */
+	public function get_columns_without_types( $table_name ){
+		global $wpdb;
+		$columns = $wpdb->get_results( 'DESCRIBE ' . $table_name . ';' );
+
+		$result_set = [];
+		foreach ( $columns as $column ) {
+			$result_set[] = $column->Field;
+		}
+		return $result_set;
+	}
+
+	/**
 	 * provides all column names and types of a given table name
 	 *
 	 * @since 1.0.0
@@ -158,6 +177,29 @@ class D2T_DbHandler {
 			return  $results;
 		}
 		throw new Exception( 'Table ' . $table_name . ' does not exists.' );
+	}
+
+	/**
+	 * Check whether table already exist in dab
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $table_name [require]
+	 *
+	 * @return boolean
+	 */
+	public function check_table_exists( $table_name = null ) {
+		global $wpdb;
+
+		if ( empty( $table_name ) ) {
+			$message = __( 'Table name is empty.', $this->d2t );
+			throw new Exception( $message );
+		}
+
+		$valid_table_name = $this->is_lower_case_table_names ? strtolower( $table_name ) : $table_name;
+		$result           = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $valid_table_name ) );
+
+		return $valid_table_name === $result;
 	}
 
 	/**
@@ -197,29 +239,6 @@ class D2T_DbHandler {
 		preg_match( '/(?i)(create table)( if exists)?\s(?<tableName>[^\s]+)/', $sql, $result );
 
 		return $result['tableName'];
-	}
-
-	/**
-	 * Check whether table already exist in dab
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string $table_name [require]
-	 *
-	 * @return boolean
-	 */
-	private function check_table_exists( $table_name = null ) {
-		global $wpdb;
-
-		if ( empty( $table_name ) ) {
-			$message = __( 'Table name is empty.', $this->d2t );
-			throw new Exception( $message );
-		}
-
-		$valid_table_name = $this->is_lower_case_table_names ? strtolower( $table_name ) : $table_name;
-		$result           = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $valid_table_name ) );
-
-		return $valid_table_name === $result;
 	}
 
 }
