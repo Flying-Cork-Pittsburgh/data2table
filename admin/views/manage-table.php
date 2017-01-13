@@ -31,6 +31,7 @@ $table      = $this->get_data_table( $table_name );
 ?>
 <div class="wrap">
 	<h3><a name="top"><?php echo $table_name ?></a></h3>
+	<input id="table_name" type="hidden" value="<?php echo $table_name ?>" />
 	<?php include_once 'partials/alerts_inc.php' ?>
 
 	<ul class="tabs">
@@ -54,7 +55,7 @@ $table      = $this->get_data_table( $table_name );
 		<form method="post" enctype="multipart/form-data" class="custom-file-upload">
 			<?php wp_nonce_field( 'd2t_upload_file' ); ?>
 			<input name="FileInput" id="FileInput" class="file-upload-input" accept=".csv,.txt" type="file"/>
-			<input type="submit" id="submit-btn" class="file-upload-button btn btn-default" value="Import to Database"/>
+			<input type="submit" id="submit-btn" class="file-upload-button btn btn-default" value="Upload file"/>
 		</form>
 		<div class="clear"></div>
 

@@ -35,50 +35,50 @@ class D2T_DataImporter {
 	private $fixed_file_name;
 
 
-	public function __construct($db) {
-		$this->db = $db;
+	public function __construct( $db ) {
+		$this->db                 = $db;
 		$this->allowed_file_types = array(
 			'.csv',
 			'.txt'
 		);    // These will be the types of file that will pass the validation.
-		$this->max_filesize = 524288;                     // Maximum file size in BYTES (currently 0.5MB).
-		$wp_upload_dir       = wp_upload_dir();
-		$this->upload_path   = $wp_upload_dir['basedir'] . '/files/'; // or plugin_dir_path( __FILE__ ) . 'files/';
-		$this->fixed_file_name = 'data';
+		$this->max_filesize       = 524288;                     // Maximum file size in BYTES (currently 0.5MB).
+		$wp_upload_dir            = wp_upload_dir();
+		$this->upload_path        = $wp_upload_dir['basedir'] . '/files/'; // or plugin_dir_path( __FILE__ ) . 'files/';
+		$this->fixed_file_name    = 'data';
 	}
 
 	public function upload_file( $file, $table_name ) {
 		$filename_temp = $file['name'];
 		$ext           = substr( $filename_temp, strpos( $filename_temp, '.' ), strlen( $filename_temp ) - 1 );
 
-		if(! $this->file_is_valid($file, $ext)){
-			throw new Exception('You cannot upload to the specified directory, please contact Administrator.');
+		if (!file_exists($this->upload_path)) {
+			mkdir($this->upload_path, 0777, true);
 		}
 
-		$file_destination = $this->get_file_destination($ext);
-		if ( is_writable( $this->upload_path ) ) {
-			if ( move_uploaded_file( $file['tmp_name'], $file_destination ) ) {
-				chmod( $file_destination, 0777 );
-				return true;
-			}
-			throw new Exception('Failed to move File into directory: '
-			                    . $this->upload_path .' please contact Administrator.');
+		if ( ! $this->file_is_valid( $file, $ext ) && ! is_writable( $this->upload_path ) ) {
+			throw new Exception( 'You cannot upload to the specified directory, please contact Administrator.' );
 		}
-
-		$columns = $this->db->get_columns($table_name);
+		if ( ! move_uploaded_file( $file['tmp_name'], $this->upload_path . $this->fixed_file_name . $ext  ) ) {
+			throw new Exception( 'Failed to move File into directory: '
+			                     . $this->upload_path . ' please contact Administrator.'
+			);
+		}
+		// todo check if table exists
+		$columns = $this->db->get_columns( $table_name );
 		// todo check columns of file with columns of database by name
-		$array = array_map('str_getcsv', file($file_destination));
-		$header = array_shift($array);
-		array_walk($array, '_combine_array', $header);
+		$array  = array_map( 'str_getcsv', file( $this->upload_path . $this->fixed_file_name .$ext ) );
+		$header = array_shift( $array );
+		array_walk( $array, '_combine_array', $header );
 
-		function _combine_array(&$row, $key, $header) {
-			$row = array_combine($header, $row);
+		function _combine_array( &$row, $key, $header ) {
+			$row = array_combine( $header, $row );
 		}
+
 		return true;
 	}
 
-	private function file_is_valid($file, $ext){
-		$filesize     = filesize($file['tmp_name']);
+	private function file_is_valid( $file, $ext ) {
+		$filesize = filesize( $file['tmp_name'] );
 
 		// file validation
 		if ( ! in_array( $ext, $this->allowed_file_types ) ) {
@@ -90,11 +90,7 @@ class D2T_DataImporter {
 				. round( $filesize / 1024 / 1024, 1 ) . 'MB'
 			);
 		}
+
 		return true;
 	}
-
-	private function get_file_destination($ext){
-		return $this->upload_path . $this->fixed_file_name . $ext;
-	}
-
 }

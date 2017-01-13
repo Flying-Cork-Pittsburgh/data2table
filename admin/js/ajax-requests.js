@@ -147,12 +147,13 @@
         submit_button.val('please wait...');
         alert_danger.hide();
 
-        var over = '<div id="overlay"><span id="loading">' +
+        var over = '<div id="overlay" style="display: none;"><span id="loading">' +
             '<p>Please wait while loading</p></span></div>';
-        $(over).appendTo('body');
+        $(over).appendTo('body').fadeIn("slow");
 
         var formData = new FormData();
         formData.append('file', $('#FileInput')[0].files[0]);
+        formData.append('table_name', $('#table_name').val());
         formData.append('action', 'ajax_test_import_file');
 
         $.ajax({
@@ -166,7 +167,7 @@
             beforeSend: function () {
                 submit_button.val('Please wait ...');
                 submit_button.prop("disabled", true);
-                $('.alert').fadeOut("slow");
+                alert_danger.fadeOut("slow");
             },
             // use beforeSubmit to add your nonce to the form data before submitting.
             beforeSubmit: function (arr, $form, options) {
@@ -177,19 +178,27 @@
                 if (result.success) {
                     alert_success.find('.message').text(text);
                     alert_success.fadeIn("slow");
-                    submit_button.val(submit_button_val);
-                    submit_button.prop("disabled", false)
+                    submit_button.val("Import Data");
                 } else {
                     alert_danger.find('.message').text(text);
                     alert_danger.fadeIn("slow");
                     submit_button.val(submit_button_val);
-                    submit_button.prop("disabled", false);
                 }
+                submit_button.prop("disabled", false);
+                $('#overlay').fadeOut('slow',
+                    function(here){
+                        $(here).remove();
+                    });
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 alert_danger.find('.message').text(errorThrown);
                 alert_danger.fadeIn("slow");
-            }
+                submit_button.val(submit_button_val);
+                submit_button.prop("disabled", false);
+                $('#overlay').fadeOut('slow',
+                    function(here){
+                        $(here).remove();
+                    });            }
         });
     });
 })

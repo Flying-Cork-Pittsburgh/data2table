@@ -144,7 +144,7 @@ class D2T_Admin {
 				echo wp_send_json_error( $e->getMessage() );
 			}
 			echo wp_send_json_success(
-				__( 'Upload was successfully. Please check the preview and hit import if all is fine',
+				__( 'Upload was successfully. Please check the preview and hit "import Data" if all is fine',
 					$this->d2t
 				)
 			);
