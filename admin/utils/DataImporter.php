@@ -123,8 +123,8 @@ class D2T_DataImporter {
 	 * @return array
 	 */
 	public function get_preview($data, $table_name){
-		$result = array();
-		// todo return preview of 5 columns
+		$result = array_slice($data, 1, 5, true);
+		// todo use importer functions to filter all values (defaults & constraints)
 		return $result;
 	}
 

@@ -64,6 +64,7 @@ $table      = $this->get_data_table( $table_name );
 			<div id ="preview-alert" class="alert alert-warning" role="alert" style="display: none;">
 				<strong>Warning! </strong><span class="message"></span>
 			</div>
+
 		</div>
 
 	</div>

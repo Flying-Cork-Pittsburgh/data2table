@@ -22,7 +22,8 @@ ul.tabs li {
     width: 200px; }
 
 .tab-content.current {
-    border-top: 5px solid #00a0d2; }
+    border-top: 5px solid #00a0d2;
+}
 
 ul.tabs li.current {
     background: #00a0d2;
@@ -99,6 +100,10 @@ p.info {
     margin-bottom: 5px;
 }
 
+#tab-import h5{
+    margin-top: 30px;
+}
+
 #submit-btn:hover {
     background: rgba(135, 184, 129, 0.8);
 }
@@ -131,4 +136,9 @@ p.info {
     top: 50%;
     left: 50%;
     margin: -50px 0 0 -75px;
+}
+
+#preview{
+    margin-top: 30px;
+    border-top: 3px dashed #00a0d2;
 }

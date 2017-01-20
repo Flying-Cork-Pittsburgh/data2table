@@ -25,6 +25,15 @@ class D2T_DataTable extends List_Table {
 	private $table_name;
 
 	/**
+	 * if item action should get displayed (edit, delete)
+	 *
+	 * @since    1.0.0
+	 * @access   protected
+	 * @var      boolean $display_actions
+	 */
+	private $display_actions;
+
+	/**
 	 * properties of database table for displaying data
 	 *
 	 * @since    1.0.0
@@ -42,9 +51,10 @@ class D2T_DataTable extends List_Table {
 	 */
 	private $property_names;
 
-	function __construct( $table_name, $db ) {
+	function __construct( $table_name, $display_actions, $db ) {
 		$this->db             = $db;
 		$this->table_name     = $table_name;
+		$this->display_actions = $display_actions;
 		$this->properties     = $this->db->get_columns( $this->table_name );
 		$this->property_names = array();
 
@@ -79,9 +89,11 @@ class D2T_DataTable extends List_Table {
 	}
 
 	function get_columns() {
-		$columns = array(
-			'actions' => 'actions'
-		);
+		$columns = array();
+		if($this->display_actions){
+			$columns['actions'] = 'actions';
+		}
+		
 		foreach ( $this->properties as $property ) {
 			$columns[ $property['field'] ] = $property['field'] . '</br> ' . $property['type'];
 		}
@@ -172,5 +184,14 @@ class D2T_DataTable extends List_Table {
 		);
 	}
 
+	public function get_html() {
+		ob_start(); //Start output buffer
+
+		$this->display();
+
+		$output = ob_get_contents(); //Grab output
+		ob_end_clean(); //Discard output buffer
+		return $output;
+	}
 }
 
