@@ -197,7 +197,7 @@ class D2T_Admin {
 			$this->name,                          // page title
 			$this->name,                         // menu title
 			// Change the capability to make the pages visible for other users
-			'manage_database',                // capability
+			'activate_plugins',                // capability
 			$this->d2t . '-dashboard',                         // menu slug
 			function () {
 				require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/views/dashboard.php';
@@ -211,7 +211,7 @@ class D2T_Admin {
 			$this->d2t . '-dashboard',
 			__( 'new Table', $this->d2t ),
 			__( 'new Table', $this->d2t ),
-			'manage_database',
+			'activate_plugins',
 			$this->d2t . '-new-table',
 			function () {
 				require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/views/create-table.php';
@@ -221,7 +221,7 @@ class D2T_Admin {
 			null,
 			__( 'manage Table', $this->d2t ),
 			__( 'manage Table', $this->d2t ),
-			'manage_database',
+			'activate_plugins',
 			$this->d2t . '-manage-table',
 			function () {
 				require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/views/manage-table.php';
