@@ -134,9 +134,12 @@ class D2T_Admin {
 		}
 		$file       = $_FILES["file"];
 		$table_name = $_POST['table_name'];
+		$delimiter = $_POST['delimiter'];
+		$date_pattern = $_POST['date_pattern'];
+
 		try {
 			$filepath            = $this->importer->upload_file( $file, $table_name );
-			$data                = $this->importer->get_file_data( $filepath );
+			$data                = $this->importer->get_file_data( $filepath , $delimiter, $date_pattern  );
 			$property_difference = $this->importer->get_property_difference( $data[0], $table_name );
 
 			$preview       = $this->importer->get_preview( $data, $table_name );

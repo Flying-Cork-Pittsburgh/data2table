@@ -33,7 +33,8 @@ class D2T_DataImporter {
 	private $max_filesize;
 	private $upload_path;
 	private $fixed_file_name;
-
+	private $delimiter;
+	private $date_pattern;
 
 	public function __construct( $db ) {
 		$this->db                 = $db;
@@ -45,6 +46,8 @@ class D2T_DataImporter {
 		$wp_upload_dir            = wp_upload_dir();
 		$this->upload_path        = $wp_upload_dir['basedir'] . '/files/'; // or plugin_dir_path( __FILE__ ) . 'files/';
 		$this->fixed_file_name    = 'data';
+		$this->delimiter          = ',';
+		$this->date_pattern       = 'yyyy-MM-dd';
 	}
 
 	/**
@@ -61,21 +64,22 @@ class D2T_DataImporter {
 		$filename_temp = $file['name'];
 		$ext           = substr( $filename_temp, strpos( $filename_temp, '.' ), strlen( $filename_temp ) - 1 );
 
-		if(! $this->db->check_table_exists($table_name)){
+		if ( ! $this->db->check_table_exists( $table_name ) ) {
 			throw new Exception( 'Table: ' . $table_name . ' does not exists!' );
 		}
-		if (!file_exists($this->upload_path)) {
-			mkdir($this->upload_path, 0777, true);
+		if ( ! file_exists( $this->upload_path ) ) {
+			mkdir( $this->upload_path, 0777, true );
 		}
 		if ( ! $this->file_is_valid( $file, $ext ) && ! is_writable( $this->upload_path ) ) {
 			throw new Exception( 'You cannot upload to the specified directory, please contact Administrator.' );
 		}
-		if ( ! move_uploaded_file( $file['tmp_name'], $this->upload_path . $this->fixed_file_name . $ext  ) ) {
+		if ( ! move_uploaded_file( $file['tmp_name'], $this->upload_path . $this->fixed_file_name . $ext ) ) {
 			throw new Exception( 'Failed to move File into directory: '
 			                     . $this->upload_path . ' please contact Administrator.'
 			);
 		}
-		return $this->upload_path . $this->fixed_file_name .$ext;
+
+		return $this->upload_path . $this->fixed_file_name . $ext;
 	}
 
 	/**
@@ -87,11 +91,19 @@ class D2T_DataImporter {
 	 *
 	 * @return array
 	 */
-	public function get_file_data($filepath){
-		$data = array_map('str_getcsv', file($filepath));
-		array_walk($data, function(&$a) use ($data) {
-			$a = array_combine($data[0], $a);
-		});
+	public function get_file_data( $filepath, $delimiter = null, $date_pattern = null ) {
+		$delimiter    = ( isset( $delimiter ) ? $delimiter : $this->delimiter );
+		$date_pattern = ( isset( $date_pattern ) ? $date_pattern : $this->date_pattern );   // TODO not used yet
+
+		$data = array_map( function ( $d ) use ( $delimiter ) {
+			return str_getcsv( $d, $delimiter );
+		}, file( $filepath )
+		);
+		array_walk( $data, function ( &$a ) use ( $data ) {
+			$a = array_combine( $data[0], $a );
+		}
+		);
+
 		return $data;
 	}
 
@@ -104,13 +116,10 @@ class D2T_DataImporter {
 	 *
 	 * @return array
 	 */
-	public function get_property_difference($data, $table_name){
+	public function get_property_difference( $data, $table_name ) {
 		$columns = $this->db->get_columns_without_types( $table_name );
-		$result = array_diff($columns, array_keys($data));
-		 if (sizeof($result) > 0 ){
-			 return $result;
-		 }
-		throw new Exception( 'No property matches the database table. No values to import found.');
+
+		return array_diff( $columns, array_keys( $data ) );
 	}
 
 	/**
@@ -122,10 +131,9 @@ class D2T_DataImporter {
 	 *
 	 * @return array
 	 */
-	public function get_preview($data, $table_name){
-		$test_set = array_values(array_slice($data, 1, 5, true));
-		// todo use importer functions to filter all values (defaults & constraints)
-		return $this->db->test_data_insert($table_name, $test_set);
+	public function get_preview( $data, $table_name ) {
+		$test_set = array_values( array_slice( $data, 1, 5, true ) );
+		return $this->db->test_data_insert( $table_name, $test_set );
 	}
 
 	/**
@@ -149,6 +157,7 @@ class D2T_DataImporter {
 				. round( $filesize / 1024 / 1024, 1 ) . 'MB'
 			);
 		}
+
 		return true;
 	}
 }

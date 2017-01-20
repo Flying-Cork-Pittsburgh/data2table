@@ -284,7 +284,7 @@ class D2T_DbHandler {
 	 *
 	 * @param string $table_name name of table to clone
 	 *
-	 * @return string table name
+	 * @return string table name of clone
 	 */
 	private function create_table_clone( $table_name ) {
 		global $wpdb;
@@ -295,9 +295,16 @@ class D2T_DbHandler {
 		return $tmp_table_name;
 	}
 
+	/**
+	 * replaces all rows with unique value, and inserts all other rows
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $table_name name of table to import
+	 * @param array $data data to import
+	 */
 	private function import_data( $table_name, $data ) {
 		global $wpdb;
-		$count = sizeof( $data );
 		foreach($data as $row){
 			$wpdb->replace( $table_name, $row );
 			if ( ! $wpdb->result ) {

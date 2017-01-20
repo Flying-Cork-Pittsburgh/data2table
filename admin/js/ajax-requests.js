@@ -154,6 +154,8 @@
             var formData = new FormData();
             formData.append('file', $('#FileInput')[0].files[0]);
             formData.append('table_name', $('#table_name').val());
+            formData.append('date_pattern', $('#date_pattern').val());
+            formData.append('delimiter', $('#delimiter').val());
             formData.append('action', 'ajax_test_import_file');
 
             $.ajax({

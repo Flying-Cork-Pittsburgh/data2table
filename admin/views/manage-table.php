@@ -31,7 +31,7 @@ $table      = $this->get_data_table( $table_name );
 ?>
 <div class="wrap">
 	<h3><a name="top"><?php echo $table_name ?></a></h3>
-	<input id="table_name" type="hidden" value="<?php echo $table_name ?>" />
+	<input id="table_name" type="hidden" value="<?php echo $table_name ?>"/>
 	<?php include 'partials/alerts_inc.php' ?>
 
 	<ul class="tabs">
@@ -56,12 +56,42 @@ $table      = $this->get_data_table( $table_name );
 			<?php wp_nonce_field( 'd2t_upload_file' ); ?>
 			<input name="FileInput" id="FileInput" class="file-upload-input" accept=".csv,.txt" type="file"/>
 			<input type="submit" id="submit-btn" class="file-upload-button btn btn-default" value="Upload file"/>
+			<table id="options">
+				<tr style="display: none;">
+					<td>
+						<label>Date Format</label>
+					</td>
+					<td>
+						<select id="date_pattern">
+							<option value="yyyy-MM-dd" selected>yyyy-MM-dd</option>
+							<option value="yy/MM/dd">yy/MM/dd"</option>
+							<option value="M/d/yyyy">M/d/yyyy</option>
+							<option value="M/d/yy">M/d/yy</option>
+							<option value="MM/dd/yy">MM/dd/yy</option>
+							<option value="dd-MMM-yy">dd-MMM-yy</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label>Delimiter</label>
+					</td>
+					<td>
+						<select id="delimiter">
+							<option value="," selected>,</option>
+							<option value=";">;</option>
+							<option value="\t">tab</option>
+							<option value="|">|</option>
+						</select>
+					</td>
+				</tr>
+			</table>
 		</form>
 		<div class="clear"></div>
 
 		<div id="preview" style="display: none;">
 			<h5>Preview</h5>
-			<div id ="preview-alert" class="alert alert-warning" role="alert">
+			<div id="preview-alert" class="alert alert-warning" role="alert">
 				<strong>Warning! </strong>
 				<span class="message">The id's might not match the actual database state. </span>
 			</div>
