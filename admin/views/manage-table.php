@@ -20,7 +20,7 @@
 </script>
 
 <?php
-if ( ! current_user_can( 'manage_database' ) ) {
+if ( ! current_user_can( 'activate_plugins' ) ) {
 	wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 } elseif ( ! isset( $_REQUEST['table'] ) ) {
 	wp_die( __( 'Please go back to the dashboard and select a table to manage.' ) );
