@@ -147,5 +147,30 @@ class D2T_DataTable extends List_Table {
 			), ARRAY_A
 		);
 	}
+
+	public function prepare_preview($items) {
+		$this->items = $items;
+
+		$columns               = $this->get_columns();
+		$this->_column_headers = array( $columns, array(), array() );
+
+		$per_page    = 5;
+		$total_items = 5;
+
+		$this->set_pagination_args(
+			array(
+				'total_items' => $total_items,
+				'per_page'    => $per_page,
+				'total_pages' => ceil( $total_items / $per_page ),
+				'orderby'     => ( isset( $_REQUEST['orderby'] ) && in_array( $_REQUEST['orderby'],
+						array_keys( $this->get_sortable_columns() )
+					) ) ? $_REQUEST['orderby'] : 'id ',
+				'order'       => ( isset( $_REQUEST['order'] ) && in_array( $_REQUEST['order'],
+						array( 'asc', 'desc' )
+					) ) ? $_REQUEST['order'] : 'asc'
+			)
+		);
+	}
+
 }
 

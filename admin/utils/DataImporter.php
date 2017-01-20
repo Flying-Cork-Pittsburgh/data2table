@@ -106,7 +106,11 @@ class D2T_DataImporter {
 	 */
 	public function get_property_difference($data, $table_name){
 		$columns = $this->db->get_columns_without_types( $table_name );
-		return array_diff($columns, array_keys($data));
+		$result = array_diff($columns, array_keys($data));
+		 if (sizeof($result) > 0 ){
+			 return $result;
+		 }
+		throw new Exception( 'No property matches the database table. No values to import found.');
 	}
 
 	/**

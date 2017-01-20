@@ -174,10 +174,16 @@
                 arr.push({"name": "nonce", "value": d2t_upload_file.nonce});
             },
             success: function (result) {
-                var text = result.data;
+                var text = result.data['message'];
                 if (result.success) {
+                var diff = Object.values(result.data['property_difference']);
+                var preview = $('#preview');
                     alert_success.find('.message').text(text);
                     alert_success.fadeIn("slow");
+                    preview.fadeIn("slow");
+                    preview.find('#preview-alert').text(
+                        'The following properties are not contained in the import file: ' + diff.join(', '))
+                        .fadeIn("slow");
                     submit_button.val("Import Data");
                 } else {
                     alert_danger.find('.message').text(text);
@@ -198,7 +204,8 @@
                 $('#overlay').fadeOut('slow',
                     function(here){
                         $(here).remove();
-                    });            }
+                    });
+            }
         });
     });
 })

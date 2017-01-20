@@ -32,7 +32,7 @@ $table      = $this->get_data_table( $table_name );
 <div class="wrap">
 	<h3><a name="top"><?php echo $table_name ?></a></h3>
 	<input id="table_name" type="hidden" value="<?php echo $table_name ?>" />
-	<?php include_once 'partials/alerts_inc.php' ?>
+	<?php include 'partials/alerts_inc.php' ?>
 
 	<ul class="tabs">
 		<li class="tab-link current" data-tab="tab-data"><?php _e( 'Data', 'd2t' ); ?></li>
@@ -58,6 +58,13 @@ $table      = $this->get_data_table( $table_name );
 			<input type="submit" id="submit-btn" class="file-upload-button btn btn-default" value="Upload file"/>
 		</form>
 		<div class="clear"></div>
+
+		<div id="preview" style="display: none;">
+			<h5>Preview</h5>
+			<div id ="preview-alert" class="alert alert-warning" role="alert" style="display: none;">
+				<strong>Warning! </strong><span class="message"></span>
+			</div>
+		</div>
 
 	</div>
 </div>

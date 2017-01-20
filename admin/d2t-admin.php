@@ -126,7 +126,7 @@ class D2T_Admin {
 	 *
 	 */
 	public function ajax_test_import_file() {
-		$preview             = array();
+		$preview_table       = null;
 		$property_difference = array();
 		if ( ! isset( $_FILES["file"] ) ) {
 			echo wp_send_json_error( 'No file was uploaded.' );
@@ -136,18 +136,26 @@ class D2T_Admin {
 		try {
 			$filepath            = $this->importer->upload_file( $file, $table_name );
 			$data                = $this->importer->get_file_data( $filepath );
-			$property_difference = $this->importer->get_property_difference( $data, $table_name );
-			$preview             = $this->importer->get_preview( $data, $table_name );
+			$property_difference = $this->importer->get_property_difference( $data[0], $table_name );
+
+			$preview       = $this->importer->get_preview( $data, $table_name );
+			$data_table    = new D2T_DataTable( $table_name, $this->db );
+			$preview_table = $data_table->prepare_preview( $preview );
 		} catch ( Exception $e ) {
-			echo wp_send_json_error( $e->getMessage() );
+			echo wp_send_json_error(
+				$response = array(
+					"message" => $e->getMessage()
+				)
+			);
 		}
 		echo wp_send_json_success(
 			$response = array(
-				"message"             => __( 'Upload was successfully. Please check the preview and hit "import Data" if all is fine',
+				"message"             => __(
+					'Upload was successfully. Please check the preview and hit "import Data" if all is fine.',
 					$this->d2t
 				),
 				"property_difference" => $property_difference,
-				"data"                => $preview
+				"preview"             => $preview_table
 			)
 		);
 	}
