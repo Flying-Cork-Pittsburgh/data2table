@@ -217,6 +217,7 @@ class D2T_Admin {
 				require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/views/create-table.php';
 			}
 		);
+
 		add_submenu_page(
 			null,
 			__( 'manage Table', $this->d2t ),
