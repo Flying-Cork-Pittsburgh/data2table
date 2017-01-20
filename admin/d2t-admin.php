@@ -120,7 +120,7 @@ class D2T_Admin {
 	}
 
 	/**
-	 * handles ajax request: validate datam upload file and get preview of data
+	 * handles ajax request: validate data upload file and get preview of data
 	 *
 	 * @since 1.0.0
 	 *
@@ -156,11 +156,52 @@ class D2T_Admin {
 		echo wp_send_json_success(
 			$response = array(
 				"message"             => __(
-					'Upload was successfully. Please check the preview and hit "import Data" if all is fine.',
+					'Upload was successfully. Please check the preview and hit "Import Data" if all is fine.',
 					$this->d2t
 				),
 				"property_difference" => $property_difference,
 				"preview"             => $html
+			)
+		);
+	}
+
+	/**
+	 * handles ajax request: validate data upload file and import data
+	 *
+	 * @since 1.0.0
+	 *
+	 */
+	public function ajax_run_import_file() {
+		$html               = '';
+		if ( ! isset( $_FILES["file"] ) ) {
+			echo wp_send_json_error( 'No file was uploaded.' );
+		}
+		$file       = $_FILES["file"];
+		$table_name = $_POST['table_name'];
+		$delimiter = $_POST['delimiter'];
+		$date_pattern = $_POST['date_pattern'];
+
+		try {
+			$filepath            = $this->importer->upload_file( $file, $table_name );
+			$data                = $this->importer->get_file_data( $filepath , $delimiter, $date_pattern  );
+			$this->importer->import_data($data,$table_name);
+			$preview_table = new D2T_DataTable( $table_name, false, $this->db );
+			$preview_table->prepare_items();
+			$html = $preview_table->get_html();
+		} catch ( Exception $e ) {
+			echo wp_send_json_error(
+				$response = array(
+					"message" => $e->getMessage()
+				)
+			);
+		}
+		echo wp_send_json_success(
+			$response = array(
+				"message"             => __(
+					'Import was successfully.',
+					$this->d2t
+				),
+				"data_table"             => $html
 			)
 		);
 	}
@@ -325,6 +366,16 @@ class D2T_Admin {
 				'ajaxurl'    => admin_url( 'admin-ajax.php' ),
 				//url for php file that process ajax request to WP
 				'nonce'      => wp_create_nonce( "d2t_upload_file" ),
+				// this is a unique token to prevent form hijacking
+				'query_vars' => json_encode( $wp_query->query )
+			)
+		);
+
+		wp_localize_script( 'ajax-requests', 'd2t_run_import_file',
+			array(
+				'ajaxurl'    => admin_url( 'admin-ajax.php' ),
+				//url for php file that process ajax request to WP
+				'nonce'      => wp_create_nonce( "d2t_run_import_file" ),
 				// this is a unique token to prevent form hijacking
 				'query_vars' => json_encode( $wp_query->query )
 			)

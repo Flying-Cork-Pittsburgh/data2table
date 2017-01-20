@@ -35,17 +35,17 @@ $table      = $this->get_data_table( $table_name );
 	<?php include 'partials/alerts_inc.php' ?>
 
 	<ul class="tabs">
-		<li class="tab-link current" data-tab="tab-data"><?php _e( 'Data', 'd2t' ); ?></li>
+		<li class="tab-link current" id="tab-data" data-tab="tab-data"><?php _e( 'Data', 'd2t' ); ?></li>
 		<li class="tab-link" data-tab="tab-import"><?php _e( 'Import', 'd2t' ); ?></li>
 	</ul>
 
 	<div id="tab-data" class="tab-content current" role="form">
 		<!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->
 		<form id="table-items" method="get">
-			<!-- For plugins, we also need to ensure that the form posts back to our current page -->
 			<input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>"/>
-			<!-- Now we can render the completed list table -->
-			<?php $table->display() ?>
+			<div id="data-table">
+				<?php $table->display() ?>
+			</div>
 		</form>
 	</div>
 	<div id="tab-import" class="tab-content">
@@ -56,6 +56,7 @@ $table      = $this->get_data_table( $table_name );
 			<?php wp_nonce_field( 'd2t_upload_file' ); ?>
 			<input name="FileInput" id="FileInput" class="file-upload-input" accept=".csv,.txt" type="file"/>
 			<input type="submit" id="submit-btn" class="file-upload-button btn btn-default" value="Upload file"/>
+			<input type="submit" id="submit-btn" class="confirm-import btn btn-default" value="Import Data" style="display: none;"/>
 			<table id="options">
 				<tr style="display: none;">
 					<td>

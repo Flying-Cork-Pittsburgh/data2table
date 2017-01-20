@@ -135,6 +135,70 @@
             });
         });
 
+        // import data
+        $(".confirm-import").click(function (event) {
+            event.preventDefault();
+            var alert_danger = $('.alert-danger');
+            var alert_success = $('.alert-success');
+            var submit_button = $(this);
+
+            submit_button.prop('disabled', true);
+            submit_button.val('please wait...');
+            alert_success.hide();
+
+            var over = '<div id="overlay" style="display: none;"><span id="loading">' +
+                '<p>Please wait while loading</p></span></div>';
+            $(over).appendTo('body').fadeIn("slow");
+
+            var formData = new FormData();
+            formData.append('file', $('#FileInput')[0].files[0]);
+            formData.append('table_name', $('#table_name').val());
+            formData.append('date_pattern', $('#date_pattern').val());
+            formData.append('delimiter', $('#delimiter').val());
+            formData.append('action', 'ajax_run_import_file');
+
+            $.ajax({
+                url: ajaxurl,  // this is part of the JS object you pass in from wp_localize_scripts.
+                type: 'post',        // 'get' or 'post', override for form's 'method' attribute
+                dataType: 'json',
+                cache: false,
+                contentType: false,
+                processData: false,
+                data: formData,
+                beforeSend: function () {
+                    submit_button.val('Please wait ...');
+                    submit_button.prop("disabled", true);
+                    alert_danger.fadeOut("slow");
+                },
+                // use beforeSubmit to add your nonce to the form data before submitting.
+                beforeSubmit: function (arr, $form, options) {
+                    arr.push({"name": "nonce", "value": d2t_run_import_file.nonce});
+                },
+                success: function (result) {
+                    var text = result.data['message'];
+                    if (result.success) {
+                        alert_success.find('.message').text(text);
+                        alert_success.fadeIn("slow");
+                        var frame = $('#data-table');
+                        var data_table = result.data['data_table'];
+                        $(frame).empty();
+                        $(frame).append(data_table);
+                        $('#tab-data').click();
+                    } else {
+                        alert_danger.find('.message').text(text);
+                        alert_danger.fadeIn("slow");
+                    }
+                    submit_button.prop("disabled", false);
+                    $('#overlay').fadeOut('slow').remove();
+
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert_danger.find('.message').text(errorThrown);
+                    alert_danger.fadeIn("slow");
+                    $('#overlay').fadeOut('slow').remove();
+                }
+            });
+        });
         // upload file
         $(".file-upload-button").click(function (event) {
             event.preventDefault();
@@ -190,27 +254,22 @@
                         preview.find('#preview-alert').text( preview_text +
                             'The following properties are not contained in the import file: ' + diff.join(', '));
                         }
-                        submit_button.val("Import Data");
+                        submit_button.hide();
+                        $('.confirm-import').show();
                     } else {
                         alert_danger.find('.message').text(text);
                         alert_danger.fadeIn("slow");
                         submit_button.val(submit_button_val);
                     }
                     submit_button.prop("disabled", false);
-                    $('#overlay').fadeOut('slow',
-                        function (here) {
-                            $(here).remove();
-                        });
+                    $('#overlay').fadeOut('slow').remove();
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
                     alert_danger.find('.message').text(errorThrown);
                     alert_danger.fadeIn("slow");
                     submit_button.val(submit_button_val);
                     submit_button.prop("disabled", false);
-                    $('#overlay').fadeOut('slow',
-                        function (here) {
-                            $(here).remove();
-                        });
+                    $('#overlay').fadeOut('slow').remove();
                 }
             });
         });

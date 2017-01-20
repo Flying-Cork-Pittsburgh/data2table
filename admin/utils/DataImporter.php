@@ -127,6 +127,7 @@ class D2T_DataImporter {
 	 *
 	 * @since 1.0.0
 	 *
+	 * @param array $data data set to import
 	 * @param string $table_name table name to describe
 	 *
 	 * @return array
@@ -134,6 +135,18 @@ class D2T_DataImporter {
 	public function get_preview( $data, $table_name ) {
 		$test_set = array_values( array_slice( $data, 1, 5, true ) );
 		return $this->db->test_data_insert( $table_name, $test_set );
+	}
+
+	/**
+	 * imports data from file
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $data data set to import
+	 * @param string $table_name table name to describe
+	 */
+	public function import_data( $data, $table_name ) {
+		$this->db->run_data_insert( $table_name, $data );
 	}
 
 	/**

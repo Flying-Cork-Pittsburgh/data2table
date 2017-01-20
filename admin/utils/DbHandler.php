@@ -278,6 +278,27 @@ class D2T_DbHandler {
 	}
 
 	/**
+	 * imports data from file
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $table_name name of table to insert data into
+	 * @param array $data set of data to insert
+	 */
+	public function run_data_insert( $table_name, $data ) {
+		$properties  = array_fill_keys(
+			array_keys( $this->get_columns_without_types( $table_name ) ),
+			''
+		);
+		$result      = array();
+		$count       = sizeof( $data );
+		for ( $i = 0; $i < $count; $i ++ ) {
+			$result[ $i ] = array_merge( $properties, $data[ $i ] );
+		}
+		$this->import_data( $table_name, $result );
+	}
+
+	/**
 	 * creates a table clone of an given table provided by table name
 	 *
 	 * @since 1.0.0
