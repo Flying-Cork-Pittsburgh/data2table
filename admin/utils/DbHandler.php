@@ -105,19 +105,20 @@ class D2T_DbHandler {
 	public function get_tables() {
 		global $wpdb;
 		$result_set = array();
-		$sql = 'SELECT TABLE_NAME, TABLE_ROWS, UPDATE_TIME FROM INFORMATION_SCHEMA.TABLES' .
-		       ' WHERE TABLE_TYPE = \'BASE TABLE\' AND TABLE_SCHEMA=' . '\'' . $wpdb->dbname . '\'';
+		$sql        = 'SELECT TABLE_NAME, TABLE_ROWS, UPDATE_TIME FROM INFORMATION_SCHEMA.TABLES' .
+		              ' WHERE TABLE_TYPE = \'BASE TABLE\' AND TABLE_SCHEMA=' . '\'' . $wpdb->dbname . '\'';
 
 		$tables = $wpdb->get_results( $sql );
 		foreach ( $tables as $table ) {
 			$table_name = $table->TABLE_NAME;
-			if(!preg_match('/(?<!prefix )' . $wpdb->prefix . '/', $table_name)){
-				$result_set[$table_name]['row_count'] = $table->TABLE_ROWS;
-				$result_set[$table_name]['last_updated'] =
-					(strlen($table->UPDATE_TIME) < 1 ? '-' : $table->UPDATE_TIME ) ;
-				$result_set[$table_name]['columns'] = $this->get_columns($table_name);
+			if ( ! preg_match( '/(?<!prefix )' . $wpdb->prefix . '/', $table_name ) ) {
+				$result_set[ $table_name ]['row_count']    = $table->TABLE_ROWS;
+				$result_set[ $table_name ]['last_updated'] =
+					( strlen( $table->UPDATE_TIME ) < 1 ? '-' : $table->UPDATE_TIME );
+				$result_set[ $table_name ]['columns']      = $this->get_columns( $table_name );
 			}
 		}
+
 		return $result_set;
 	}
 
@@ -130,14 +131,15 @@ class D2T_DbHandler {
 	 *
 	 * @return array
 	 */
-	public function get_columns( $table_name ){
+	public function get_columns( $table_name ) {
 		global $wpdb;
 		$columns = $wpdb->get_results( 'DESCRIBE ' . $table_name . ';' );
 
 		$result_set = [];
 		foreach ( $columns as $column ) {
-			$result_set[] = array('field'=>$column->Field, 'type'=>$column->Type);
+			$result_set[] = array( 'field' => $column->Field, 'type' => $column->Type );
 		}
+
 		return $result_set;
 	}
 
@@ -150,14 +152,15 @@ class D2T_DbHandler {
 	 *
 	 * @return array
 	 */
-	public function get_columns_without_types( $table_name ){
+	public function get_columns_without_types( $table_name ) {
 		global $wpdb;
 		$columns = $wpdb->get_results( 'DESCRIBE ' . $table_name . ';' );
 
 		$result_set = [];
 		foreach ( $columns as $column ) {
-			$result_set[$column->Field] = $column->Field;
+			$result_set[ $column->Field ] = $column->Field;
 		}
+
 		return $result_set;
 	}
 
@@ -170,11 +173,12 @@ class D2T_DbHandler {
 	 *
 	 * @return array
 	 */
-	public function get_data( $table_name ){
+	public function get_data( $table_name ) {
 		global $wpdb;
-		if($this->check_table_exists($table_name)){
-			$results = $wpdb->get_results( 'SELECT * FROM '. $table_name , ARRAY_A);
-			return  $results;
+		if ( $this->check_table_exists( $table_name ) ) {
+			$results = $wpdb->get_results( 'SELECT * FROM ' . $table_name, ARRAY_A );
+
+			return $results;
 		}
 		throw new Exception( 'Table ' . $table_name . ' does not exists.' );
 	}
@@ -248,26 +252,28 @@ class D2T_DbHandler {
 	 *
 	 * @param string $table_name name of table to insert data into
 	 * @param array $data set of data to insert
-
 	 *
 	 * @return array preview of inserted data
 	 */
 	public function test_data_insert( $table_name, $data ) {
 		global $wpdb;
-		$table_clone = $this->create_table_clone($table_name);
-		$properties = array_fill_keys(
-			array_keys($this->get_columns_without_types($table_clone)),
+		$table_clone = $this->create_table_clone( $table_name );
+		$properties  = array_fill_keys(
+			array_keys( $this->get_columns_without_types( $table_clone ) ),
 			''
 		);
-		for($i=0; $i < sizeof($data); $i++ ){
-			$wpdb->replace(	$table_clone, array_merge($properties, $data[$i]));
-			if(!$wpdb->result){
-				throw new Exception($wpdb->last_error);
-			}
+		$result      = array();
+		$count       = sizeof( $data );
+		for ( $i = 0; $i < $count; $i ++ ) {
+			$result[ $i ] = array_merge( $properties, $data[ $i ] );
 		}
-		$preview = $wpdb->get_results( "SELECT * FROM " . $table_clone,  ARRAY_A );
-		$sql = 'DROP TABLE ' . $table_clone ;
-		$wpdb->query($sql);
+		try {
+			$this->import_data( $table_clone, $result );
+			$preview = $wpdb->get_results( "SELECT * FROM " . $table_clone, ARRAY_A );
+		} finally {
+			$sql = 'DROP TABLE ' . $table_clone;
+			$wpdb->query( $sql );
+		}
 		return $preview;
 	}
 
@@ -280,11 +286,23 @@ class D2T_DbHandler {
 	 *
 	 * @return string table name
 	 */
-	private function create_table_clone($table_name){
+	private function create_table_clone( $table_name ) {
 		global $wpdb;
 		$tmp_table_name = $table_name . '_clone';
-		$sql = 'CREATE TABLE ' . $tmp_table_name . ' LIKE ' . $table_name ;
-		$wpdb->query($sql);
+		$sql            = 'CREATE TABLE ' . $tmp_table_name . ' LIKE ' . $table_name;
+		$wpdb->query( $sql );
+
 		return $tmp_table_name;
+	}
+
+	private function import_data( $table_name, $data ) {
+		global $wpdb;
+		$count = sizeof( $data );
+		foreach($data as $row){
+			$wpdb->replace( $table_name, $row );
+			if ( ! $wpdb->result ) {
+				throw new Exception( $wpdb->last_error );
+			}
+		}
 	}
 }
