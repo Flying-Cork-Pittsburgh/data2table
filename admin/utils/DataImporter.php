@@ -123,9 +123,9 @@ class D2T_DataImporter {
 	 * @return array
 	 */
 	public function get_preview($data, $table_name){
-		$result = array_slice($data, 1, 5, true);
+		$test_set = array_values(array_slice($data, 1, 5, true));
 		// todo use importer functions to filter all values (defaults & constraints)
-		return $result;
+		return $this->db->test_data_insert($table_name, $test_set);
 	}
 
 	/**

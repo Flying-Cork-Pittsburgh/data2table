@@ -183,9 +183,11 @@
                         alert_success.fadeIn("slow");
                         $(preview).append(preview_table);
                         preview.fadeIn("slow");
-                        preview.find('#preview-alert').text(
-                            'The following properties are not contained in the import file: ' + diff.join(', '))
-                            .fadeIn("slow");
+                        if(diff.length > 0){
+                        var preview_text = preview.find('#preview-alert').text();
+                        preview.find('#preview-alert').text( preview_text +
+                            'The following properties are not contained in the import file: ' + diff.join(', '));
+                        }
                         submit_button.val("Import Data");
                     } else {
                         alert_danger.find('.message').text(text);

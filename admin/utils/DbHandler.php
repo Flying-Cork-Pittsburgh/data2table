@@ -156,7 +156,7 @@ class D2T_DbHandler {
 
 		$result_set = [];
 		foreach ( $columns as $column ) {
-			$result_set[] = $column->Field;
+			$result_set[$column->Field] = $column->Field;
 		}
 		return $result_set;
 	}
@@ -241,4 +241,50 @@ class D2T_DbHandler {
 		return $result['tableName'];
 	}
 
+	/**
+	 * returns array of data to insert as a preview
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $table_name name of table to insert data into
+	 * @param array $data set of data to insert
+
+	 *
+	 * @return array preview of inserted data
+	 */
+	public function test_data_insert( $table_name, $data ) {
+		global $wpdb;
+		$table_clone = $this->create_table_clone($table_name);
+		$properties = array_fill_keys(
+			array_keys($this->get_columns_without_types($table_clone)),
+			''
+		);
+		for($i=0; $i < sizeof($data); $i++ ){
+			$wpdb->replace(	$table_clone, array_merge($properties, $data[$i]));
+			if(!$wpdb->result){
+				throw new Exception($wpdb->last_error);
+			}
+		}
+		$preview = $wpdb->get_results( "SELECT * FROM " . $table_clone,  ARRAY_A );
+		$sql = 'DROP TABLE ' . $table_clone ;
+		$wpdb->query($sql);
+		return $preview;
+	}
+
+	/**
+	 * creates a table clone of an given table provided by table name
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $table_name name of table to clone
+	 *
+	 * @return string table name
+	 */
+	private function create_table_clone($table_name){
+		global $wpdb;
+		$tmp_table_name = $table_name . '_clone';
+		$sql = 'CREATE TABLE ' . $tmp_table_name . ' LIKE ' . $table_name ;
+		$wpdb->query($sql);
+		return $tmp_table_name;
+	}
 }

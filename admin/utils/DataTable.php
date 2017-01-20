@@ -93,7 +93,7 @@ class D2T_DataTable extends List_Table {
 		if($this->display_actions){
 			$columns['actions'] = 'actions';
 		}
-		
+
 		foreach ( $this->properties as $property ) {
 			$columns[ $property['field'] ] = $property['field'] . '</br> ' . $property['type'];
 		}
@@ -166,8 +166,8 @@ class D2T_DataTable extends List_Table {
 		$columns               = $this->get_columns();
 		$this->_column_headers = array( $columns, array(), array() );
 
-		$per_page    = 5;
-		$total_items = 5;
+		$per_page    = sizeof($items);
+		$total_items = sizeof($items);
 
 		$this->set_pagination_args(
 			array(

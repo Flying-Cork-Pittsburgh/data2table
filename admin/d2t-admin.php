@@ -127,7 +127,7 @@ class D2T_Admin {
 	 */
 	public function ajax_test_import_file() {
 		$preview_table       = null;
-		$table = '';
+		$html               = '';
 		$property_difference = array();
 		if ( ! isset( $_FILES["file"] ) ) {
 			echo wp_send_json_error( 'No file was uploaded.' );
@@ -140,9 +140,9 @@ class D2T_Admin {
 			$property_difference = $this->importer->get_property_difference( $data[0], $table_name );
 
 			$preview       = $this->importer->get_preview( $data, $table_name );
-			$preview_table    = new D2T_DataTable( $table_name, false, $this->db );
+			$preview_table = new D2T_DataTable( $table_name, false, $this->db );
 			$preview_table->prepare_preview( $preview );
-			$table = $preview_table->get_html();
+			$html = $preview_table->get_html();
 		} catch ( Exception $e ) {
 			echo wp_send_json_error(
 				$response = array(
@@ -157,7 +157,7 @@ class D2T_Admin {
 					$this->d2t
 				),
 				"property_difference" => $property_difference,
-				"preview"             => $table
+				"preview"             => $html
 			)
 		);
 	}

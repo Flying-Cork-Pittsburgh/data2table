@@ -61,8 +61,9 @@ $table      = $this->get_data_table( $table_name );
 
 		<div id="preview" style="display: none;">
 			<h5>Preview</h5>
-			<div id ="preview-alert" class="alert alert-warning" role="alert" style="display: none;">
-				<strong>Warning! </strong><span class="message"></span>
+			<div id ="preview-alert" class="alert alert-warning" role="alert">
+				<strong>Warning! </strong>
+				<span class="message">The id's might not match the actual database state. </span>
 			</div>
 
 		</div>
