@@ -40,7 +40,6 @@ $table      = $this->get_data_table( $table_name );
 	</ul>
 
 	<div id="tab-data" class="tab-content current" role="form">
-		<!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->
 		<form id="table-items" method="get">
 			<input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>"/>
 			<div id="data-table">
@@ -95,7 +94,9 @@ $table      = $this->get_data_table( $table_name );
 			<div id="preview-alert" class="alert alert-warning" role="alert">
 				<strong>Warning! </strong>
 				<span class="message">The id's might not match the actual database state. </span>
+				<span id="import-info"></span>
 			</div>
+			<div id="data-table-preview"></div>
 
 		</div>
 

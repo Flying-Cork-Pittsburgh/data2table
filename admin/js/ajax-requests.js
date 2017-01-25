@@ -181,21 +181,23 @@
                         alert_success.fadeIn("slow");
                         var frame = $('#data-table');
                         var data_table = result.data['data_table'];
-                        $(frame).empty();
-                        $(frame).append(data_table);
-                        $('#tab-data').click();
+                        frame.empty();
+                        frame.append(data_table);
                     } else {
                         alert_danger.find('.message').text(text);
                         alert_danger.fadeIn("slow");
                     }
                     submit_button.prop("disabled", false);
                     $('#overlay').fadeOut('slow').remove();
-
+                    submit_button.hide();
+                    $('.file-upload-button').show();
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
                     alert_danger.find('.message').text(errorThrown);
                     alert_danger.fadeIn("slow");
                     $('#overlay').fadeOut('slow').remove();
+                    submit_button.hide();
+                    $('.file-upload-button').show();
                 }
             });
         });
@@ -247,14 +249,16 @@
                         var preview = $('#preview');
                         alert_success.find('.message').text(text);
                         alert_success.fadeIn("slow");
-                        $(preview).append(preview_table);
+                        var data_table_preview = $(preview).find('#data-table-preview');
+                        data_table_preview.empty();
+                        data_table_preview.append(preview_table);
                         preview.fadeIn("slow");
                         if(diff.length > 0){
-                        var preview_text = preview.find('#preview-alert').text();
-                        preview.find('#preview-alert').text( preview_text +
+                            preview.find('#import-info').text(
                             'The following properties are not contained in the import file: ' + diff.join(', '));
                         }
                         submit_button.hide();
+                        submit_button.val(submit_button_val);
                         $('.confirm-import').show();
                     } else {
                         alert_danger.find('.message').text(text);
