@@ -6,7 +6,7 @@
          */
 
         // submitting sql statement
-        $(document).on('click', '.submit-sql-statement', function (event) {
+        $(".submit-sql-statement").click(function (event) {
             event.preventDefault();
             var sql_target = $(this).attr('id');
             var text_field = $('#sql_statement');
@@ -20,8 +20,8 @@
             var alert_success = $('.alert-success');
 
             $.ajax({
-                url: ajaxurl,  // this is part of the JS object you pass in from wp_localize_scripts.
-                type: 'post',        // 'get' or 'post', override for form's 'method' attribute
+                url: ajaxurl,
+                type: 'post',
                 dataType: 'json',
                 data: {
                     action: 'ajax_create_table',
@@ -66,7 +66,7 @@
         });
 
         // pack values from creator into json to create sql statement from Backend
-        $(document).on('click', '#create-sql-from-creator', function (event) {
+        $("#create-sql-from-creator").click(function (event) {
             event.preventDefault();
             var table = {};
             table['table_name'] = $('#table_name').val();
@@ -97,8 +97,8 @@
             var alert_danger = $('.alert-danger');
             var submit_button = $(this);
             $.ajax({
-                url: ajaxurl,  // this is part of the JS object you pass in from wp_localize_scripts.
-                type: 'post',        // 'get' or 'post', override for form's 'method' attribute
+                url: ajaxurl,
+                type: 'post',
                 dataType: 'json',
                 data: {
                     action: 'ajax_build_sql_statement',
@@ -158,8 +158,8 @@
             formData.append('action', 'ajax_run_import_file');
 
             $.ajax({
-                url: ajaxurl,  // this is part of the JS object you pass in from wp_localize_scripts.
-                type: 'post',        // 'get' or 'post', override for form's 'method' attribute
+                url: ajaxurl,
+                type: 'post',
                 dataType: 'json',
                 cache: false,
                 contentType: false,
@@ -225,8 +225,8 @@
             formData.append('action', 'ajax_test_import_file');
 
             $.ajax({
-                url: ajaxurl,  // this is part of the JS object you pass in from wp_localize_scripts.
-                type: 'post',        // 'get' or 'post', override for form's 'method' attribute
+                url: ajaxurl,
+                type: 'post',
                 dataType: 'json',
                 cache: false,
                 contentType: false,

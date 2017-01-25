@@ -35,7 +35,7 @@ $table      = $this->get_data_table( $table_name );
 	<?php include 'partials/alerts_inc.php' ?>
 
 	<ul class="tabs">
-		<li class="tab-link current" id="tab-data" data-tab="tab-data"><?php _e( 'Data', 'd2t' ); ?></li>
+		<li class="tab-link current" data-tab="tab-data"><?php _e( 'Data', 'd2t' ); ?></li>
 		<li class="tab-link" data-tab="tab-import"><?php _e( 'Import', 'd2t' ); ?></li>
 	</ul>
 

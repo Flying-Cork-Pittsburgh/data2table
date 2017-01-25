@@ -5,7 +5,7 @@
         /*
          * Javascript functions
          */
-        $(document).on('click', 'ul.tabs li', function () {
+        $("ul.tabs li").click(function () {
             var tab_id = $(this).attr('data-tab');
 
             $('ul.tabs li').removeClass('current');
@@ -20,7 +20,7 @@
             $("#" + tab_id).addClass('current');
         });
 
-        $(document).on('blur', '.required-input', function () {
+        $(".required-input").blur(function () {
             var current_input = $(this);
             if (current_input.val().length == 0) {
                 current_input.addClass('form-control-danger').parent().addClass('has-danger');
@@ -30,11 +30,12 @@
         });
 
         // delete last column on button click
-        $(document).on('click', '.delete-column', function () {
+        $(".delete-column").click(function () {
             $('#columns').find('tr').last().remove();
         });
 
-        $(document).on('click', '.add-column', function () {
+        // appends new column on button click
+        $(".add-column").click(function () {
             var last_column = $("#columns").find('tr:last-child');
             var new_column = last_column.clone();
             new_column.replaceWith();
@@ -45,7 +46,7 @@
         });
 
         // clear input field on cancel click
-        $(document).on('click', '.clear-input', function () {
+        $(".clear-input").click(function (event) {
             event.preventDefault();
             var sql_target = $(this).attr('id');
             var text_field = $('#sql_statement');
