@@ -42,7 +42,7 @@ if ( ! current_user_can( 'activate_plugins' ) ) {
 
 			$columns      = $tables[ $table_name ]['columns'];
 			$column_count = sizeof($columns);
-			for ( $i = 0; $i < 5; $i++) {
+			for ( $i = 0; $i < $column_count; $i++) {
 				echo '<li class="list-group-item"><strong>' . $columns[$i]['field'] . '</strong> - '
 				     . $columns[$i]['type'] . '</li>';
 			}

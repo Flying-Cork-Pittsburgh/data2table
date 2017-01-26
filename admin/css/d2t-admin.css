@@ -22,7 +22,8 @@ ul.tabs li {
     width: 200px; }
 
 .tab-content.current {
-    border-top: 5px solid #00a0d2; }
+    border-top: 5px solid #00a0d2;
+}
 
 ul.tabs li.current {
     background: #00a0d2;
@@ -70,4 +71,78 @@ p.info {
 }
 .card{
     padding: 0;
+}
+
+#tab-import > .custom-file-upload input[type=file],
+#tab-import > .file-upload-input {
+    width: 300px;
+    font-size: 16px;
+    padding: 11px 17px;
+    border: none;
+    margin-left: -1px;
+    background-color: #B8B8B8;
+    -moz-transition: all 0.2s ease-in;
+    -o-transition: all 0.2s ease-in;
+    -webkit-transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
+    float: left;
+    /* IE 9 Fix */
+}
+
+#tab-import >.custom-file-upload {
+    display: block;
+    width: auto;
+    font-size: 16px;
+}
+
+#tab-import > .custom-file-upload label {
+    display: inline;
+    margin: 5px 0;
+}
+
+#tab-import #options{
+    margin-top: 25px;
+}
+
+#tab-import h5{
+    margin-top: 30px;
+}
+
+#submit-btn:hover {
+    background: rgba(135, 184, 129, 0.8);
+}
+
+#submit-btn{
+    background: rgba(135, 184, 129, 0.4);
+    height: 52px;
+    padding: 0 17px;
+    border: none;
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+}
+
+#overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    background: #000;
+    opacity: 0.8;
+    filter: alpha(opacity=80);
+}
+
+#loading {
+    width: 200px;
+    height: 200px;
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -50px 0 0 -75px;
+}
+
+#preview{
+    margin-top: 30px;
+    border-top: 3px dashed #00a0d2;
 }

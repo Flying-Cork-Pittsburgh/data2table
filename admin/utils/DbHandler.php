@@ -105,20 +105,20 @@ class D2T_DbHandler {
 	public function get_tables() {
 		global $wpdb;
 		$result_set = array();
-		$sql = 'SELECT TABLE_NAME, TABLE_ROWS, UPDATE_TIME FROM INFORMATION_SCHEMA.TABLES' .
-		       ' WHERE TABLE_TYPE = \'BASE TABLE\' AND TABLE_SCHEMA=' . '\'' . $wpdb->dbname . '\'';
+		$sql        = 'SELECT TABLE_NAME, TABLE_ROWS, UPDATE_TIME FROM INFORMATION_SCHEMA.TABLES' .
+		              ' WHERE TABLE_TYPE = \'BASE TABLE\' AND TABLE_SCHEMA=' . '\'' . $wpdb->dbname . '\'';
 
 		$tables = $wpdb->get_results( $sql );
 		foreach ( $tables as $table ) {
 			$table_name = $table->TABLE_NAME;
-			if(!preg_match('/(?<!prefix )' . $wpdb->prefix . '/', $table_name)){
-				$result_set[$table_name]['row_count'] = $table->TABLE_ROWS;
-				$result_set[$table_name]['last_updated'] =
-					(strlen($table->UPDATE_TIME) < 1 ? '-' : $table->UPDATE_TIME ) ;
-				$result_set[$table_name]['columns'] = $this->get_columns($table_name);
-
+			if ( ! preg_match( '/(?<!prefix )' . $wpdb->prefix . '/', $table_name ) ) {
+				$result_set[ $table_name ]['row_count']    = $table->TABLE_ROWS;
+				$result_set[ $table_name ]['last_updated'] =
+					( strlen( $table->UPDATE_TIME ) < 1 ? '-' : $table->UPDATE_TIME );
+				$result_set[ $table_name ]['columns']      = $this->get_columns( $table_name );
 			}
 		}
+
 		return $result_set;
 	}
 
@@ -131,14 +131,36 @@ class D2T_DbHandler {
 	 *
 	 * @return array
 	 */
-	public function get_columns( $table_name ){
+	public function get_columns( $table_name ) {
 		global $wpdb;
 		$columns = $wpdb->get_results( 'DESCRIBE ' . $table_name . ';' );
 
 		$result_set = [];
 		foreach ( $columns as $column ) {
-			$result_set[] = array('field'=>$column->Field, 'type'=>$column->Type);
+			$result_set[] = array( 'field' => $column->Field, 'type' => $column->Type );
 		}
+
+		return $result_set;
+	}
+
+	/**
+	 * provides all column names only of a given table name
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $table_name table name to describe
+	 *
+	 * @return array
+	 */
+	public function get_columns_without_types( $table_name ) {
+		global $wpdb;
+		$columns = $wpdb->get_results( 'DESCRIBE ' . $table_name . ';' );
+
+		$result_set = [];
+		foreach ( $columns as $column ) {
+			$result_set[ $column->Field ] = $column->Field;
+		}
+
 		return $result_set;
 	}
 
@@ -151,13 +173,37 @@ class D2T_DbHandler {
 	 *
 	 * @return array
 	 */
-	public function get_data( $table_name ){
+	public function get_data( $table_name ) {
 		global $wpdb;
-		if($this->check_table_exists($table_name)){
-			$results = $wpdb->get_results( 'SELECT * FROM '. $table_name , ARRAY_A);
-			return  $results;
+		if ( $this->check_table_exists( $table_name ) ) {
+			$results = $wpdb->get_results( 'SELECT * FROM ' . $table_name, ARRAY_A );
+
+			return $results;
 		}
 		throw new Exception( 'Table ' . $table_name . ' does not exists.' );
+	}
+
+	/**
+	 * Check whether table already exist in dab
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $table_name [require]
+	 *
+	 * @return boolean
+	 */
+	public function check_table_exists( $table_name = null ) {
+		global $wpdb;
+
+		if ( empty( $table_name ) ) {
+			$message = __( 'Table name is empty.', $this->d2t );
+			throw new Exception( $message );
+		}
+
+		$valid_table_name = $this->is_lower_case_table_names ? strtolower( $table_name ) : $table_name;
+		$result           = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $valid_table_name ) );
+
+		return $valid_table_name === $result;
 	}
 
 	/**
@@ -200,26 +246,91 @@ class D2T_DbHandler {
 	}
 
 	/**
-	 * Check whether table already exist in dab
+	 * returns array of data to insert as a preview
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $table_name [require]
+	 * @param string $table_name name of table to insert data into
+	 * @param array $data set of data to insert
 	 *
-	 * @return boolean
+	 * @return array preview of inserted data
 	 */
-	private function check_table_exists( $table_name = null ) {
+	public function test_data_insert( $table_name, $data ) {
 		global $wpdb;
-
-		if ( empty( $table_name ) ) {
-			$message = __( 'Table name is empty.', $this->d2t );
-			throw new Exception( $message );
+		$table_clone = $this->create_table_clone( $table_name );
+		$properties  = array_fill_keys(
+			array_keys( $this->get_columns_without_types( $table_clone ) ),
+			''
+		);
+		$result      = array();
+		$count       = sizeof( $data );
+		for ( $i = 0; $i < $count; $i ++ ) {
+			$result[ $i ] = array_merge( $properties, $data[ $i ] );
 		}
-
-		$valid_table_name = $this->is_lower_case_table_names ? strtolower( $table_name ) : $table_name;
-		$result           = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $valid_table_name ) );
-
-		return $valid_table_name === $result;
+		try {
+			$this->import_data( $table_clone, $result );
+			$preview = $wpdb->get_results( "SELECT * FROM " . $table_clone, ARRAY_A );
+		} finally {
+			$sql = 'DROP TABLE ' . $table_clone;
+			$wpdb->query( $sql );
+		}
+		return $preview;
 	}
 
+	/**
+	 * imports data from file
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $table_name name of table to insert data into
+	 * @param array $data set of data to insert
+	 */
+	public function run_data_insert( $table_name, $data ) {
+		$properties  = array_fill_keys(
+			array_keys( $this->get_columns_without_types( $table_name ) ),
+			''
+		);
+		$result      = array();
+		$count       = sizeof( $data );
+		for ( $i = 0; $i < $count; $i ++ ) {
+			$result[ $i ] = array_merge( $properties, $data[ $i ] );
+		}
+		$this->import_data( $table_name, $result );
+	}
+
+	/**
+	 * creates a table clone of an given table provided by table name
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $table_name name of table to clone
+	 *
+	 * @return string table name of clone
+	 */
+	private function create_table_clone( $table_name ) {
+		global $wpdb;
+		$tmp_table_name = $table_name . '_clone';
+		$sql            = 'CREATE TABLE ' . $tmp_table_name . ' LIKE ' . $table_name;
+		$wpdb->query( $sql );
+
+		return $tmp_table_name;
+	}
+
+	/**
+	 * replaces all rows with unique value, and inserts all other rows
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $table_name name of table to import
+	 * @param array $data data to import
+	 */
+	private function import_data( $table_name, $data ) {
+		global $wpdb;
+		foreach($data as $row){
+			$wpdb->replace( $table_name, $row );
+			if ( ! $wpdb->result ) {
+				throw new Exception( $wpdb->last_error );
+			}
+		}
+	}
 }

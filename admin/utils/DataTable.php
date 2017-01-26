@@ -25,6 +25,15 @@ class D2T_DataTable extends List_Table {
 	private $table_name;
 
 	/**
+	 * if item action should get displayed (edit, delete)
+	 *
+	 * @since    1.0.0
+	 * @access   protected
+	 * @var      boolean $display_actions
+	 */
+	private $display_actions;
+
+	/**
 	 * properties of database table for displaying data
 	 *
 	 * @since    1.0.0
@@ -42,10 +51,10 @@ class D2T_DataTable extends List_Table {
 	 */
 	private $property_names;
 
-	function __construct( $table_name, $db ) {
-		global $status, $page;
+	function __construct( $table_name, $display_actions, $db ) {
 		$this->db             = $db;
 		$this->table_name     = $table_name;
+		$this->display_actions = $display_actions;
 		$this->properties     = $this->db->get_columns( $this->table_name );
 		$this->property_names = array();
 
@@ -80,9 +89,11 @@ class D2T_DataTable extends List_Table {
 	}
 
 	function get_columns() {
-		$columns = array(
-			'actions' => 'actions'
-		);
+		$columns = array();
+		if($this->display_actions){
+			$columns['actions'] = 'actions';
+		}
+
 		foreach ( $this->properties as $property ) {
 			$columns[ $property['field'] ] = $property['field'] . '</br> ' . $property['type'];
 		}
@@ -112,47 +123,75 @@ class D2T_DataTable extends List_Table {
 		<?php
 	}
 
-	function prepare_items() {
+	public function prepare_items() {
 		global $wpdb;
 
-		$per_page = 20; // constant, how much records will be shown per page
-
-		$columns  = $this->get_columns();
-		$hidden   = array();
-		$sortable = $this->get_sortable_columns();
-
-		// here we configure table headers, defined in our methods
+		$columns               = $this->get_columns();
+		$hidden                = array();
+		$sortable              = $this->get_sortable_columns();
 		$this->_column_headers = array( $columns, $hidden, $sortable );
 
-		// will be used in pagination settings
+		$per_page    = 20;
 		$total_items = $wpdb->get_var( 'SELECT COUNT(id) FROM ' . $this->table_name );
+		$paged       = isset( $_REQUEST['paged'] ) ? max( 0, intval( $_REQUEST['paged'] - 1 ) * $per_page ) : 0;
 
-		// prepare query params, as usual current page, order by and order direction
-		$paged   = isset( $_REQUEST['paged'] ) ? max( 0, intval( $_REQUEST['paged'] - 1 ) * $per_page ) : 0;
-		$orderby = ( isset( $_REQUEST['orderby'] ) && in_array( $_REQUEST['orderby'],
-				array_keys( $this->get_sortable_columns() )
-			) ) ? $_REQUEST['orderby'] : 'id ';
-		$order   = ( isset( $_REQUEST['order'] ) && in_array( $_REQUEST['order'], array(
-					'asc',
-					'desc'
-				)
-			) ) ? $_REQUEST['order'] : 'asc';
-
-		// [REQUIRED] define $items array
-		// notice that last argument is ARRAY_A, so we will retrieve array
-		$this->items = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . $this->table_name . ' ORDER BY '
-		                                                   . $orderby . ' ' . $order . ' LIMIT %d OFFSET %d', $per_page, $paged
-		), ARRAY_A
-		);
-
-		// [REQUIRED] configure pagination
-		$this->set_pagination_args( array(
-				'total_items' => $total_items, // total items defined above
-				'per_page'    => $per_page, // per page constant defined at top of method
-				'total_pages' => ceil( $total_items / $per_page ) // calculate pages count
-
+		$this->set_pagination_args(
+			array(
+				'total_items' => $total_items,
+				'per_page'    => $per_page,
+				'total_pages' => ceil( $total_items / $per_page ),
+				'orderby'     => ( isset( $_REQUEST['orderby'] ) && in_array( $_REQUEST['orderby'],
+						array_keys( $this->get_sortable_columns() )
+					) ) ? $_REQUEST['orderby'] : 'id ',
+				'order'       => ( isset( $_REQUEST['order'] ) && in_array( $_REQUEST['order'],
+						array( 'asc', 'desc' )
+					) ) ? $_REQUEST['order'] : 'asc'
 			)
 		);
+
+		$this->items = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT * FROM '
+				. $this->table_name . ' ORDER BY '
+				. $this->get_pagination_arg( 'orderby' ) . ' '
+				. $this->get_pagination_arg( 'order' )
+				. ' LIMIT %d OFFSET %d', $per_page, $paged
+			), ARRAY_A
+		);
+	}
+
+	public function prepare_preview($items) {
+		$this->items = $items;
+
+		$columns               = $this->get_columns();
+		$this->_column_headers = array( $columns, array(), array() );
+
+		$per_page    = sizeof($items);
+		$total_items = sizeof($items);
+
+		$this->set_pagination_args(
+			array(
+				'total_items' => $total_items,
+				'per_page'    => $per_page,
+				'total_pages' => ceil( $total_items / $per_page ),
+				'orderby'     => ( isset( $_REQUEST['orderby'] ) && in_array( $_REQUEST['orderby'],
+						array_keys( $this->get_sortable_columns() )
+					) ) ? $_REQUEST['orderby'] : 'id ',
+				'order'       => ( isset( $_REQUEST['order'] ) && in_array( $_REQUEST['order'],
+						array( 'asc', 'desc' )
+					) ) ? $_REQUEST['order'] : 'asc'
+			)
+		);
+	}
+
+	public function get_html() {
+		ob_start(); //Start output buffer
+
+		$this->display();
+
+		$output = ob_get_contents(); //Grab output
+		ob_end_clean(); //Discard output buffer
+		return $output;
 	}
 }
 

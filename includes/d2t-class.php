@@ -171,10 +171,14 @@ class D2T {
 		$this->loader->add_action("wp_ajax_nopriv_ajax_build_sql_statement", $plugin_admin, "ajax_build_sql_statement");
 		$this->loader->add_action("wp_ajax_ajax_build_sql_statement", $plugin_admin, "ajax_build_sql_statement");
 
+		$this->loader->add_action("wp_ajax_nopriv_ajax_test_import_file", $plugin_admin, "ajax_test_import_file");
+		$this->loader->add_action("wp_ajax_ajax_test_import_file", $plugin_admin, "ajax_test_import_file");
+
+		$this->loader->add_action("wp_ajax_nopriv_ajax_run_import_file", $plugin_admin, "ajax_run_import_file");
+		$this->loader->add_action("wp_ajax_ajax_run_import_file", $plugin_admin, "ajax_run_import_file");
+
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_ajax_sql_submission' );
 
-
-		// TODO load filters and actions here
 		// load plugin entry for wordpress admin menu
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'd2t_admin_menu' );
 	}
@@ -192,8 +196,6 @@ class D2T {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-		// TODO load filters and actions here
-
 	}
 
 	/**
