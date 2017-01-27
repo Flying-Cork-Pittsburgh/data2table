@@ -105,7 +105,7 @@ class D2T_DbHandler {
 	public function get_tables() {
 		global $wpdb;
 		$result_set = array();
-		$sql        = 'SELECT TABLE_NAME, TABLE_ROWS, UPDATE_TIME FROM INFORMATION_SCHEMA.TABLES' .
+		$sql        = 'SELECT TABLE_NAME, TABLE_ROWS, CREATE_TIME FROM INFORMATION_SCHEMA.TABLES' .
 		              ' WHERE TABLE_TYPE = \'BASE TABLE\' AND TABLE_SCHEMA=' . '\'' . $wpdb->dbname . '\'';
 
 		$tables = $wpdb->get_results( $sql );
@@ -113,8 +113,8 @@ class D2T_DbHandler {
 			$table_name = $table->TABLE_NAME;
 			if ( ! preg_match( '/(?<!prefix )' . $wpdb->prefix . '/', $table_name ) ) {
 				$result_set[ $table_name ]['row_count']    = $table->TABLE_ROWS;
-				$result_set[ $table_name ]['last_updated'] =
-					( strlen( $table->UPDATE_TIME ) < 1 ? '-' : $table->UPDATE_TIME );
+				$result_set[ $table_name ]['created'] =
+					( strlen( $table->CREATE_TIME ) < 1 ? '-' : $table->CREATE_TIME );
 				$result_set[ $table_name ]['columns']      = $this->get_columns( $table_name );
 			}
 		}

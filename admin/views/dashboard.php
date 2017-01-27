@@ -35,8 +35,8 @@ if ( ! current_user_can( 'activate_plugins' ) ) {
 			echo '<div class="card-block">';
 			echo '<p class="card-text">'.
 			     $tables[ $table_name ]['row_count'] . ' Rows | '.
-			     'Last Updated: '.
-			     $tables[ $table_name ]['last_updated'] . '</p>' .
+			     'Created: '.
+			     $tables[ $table_name ]['created'] . '</p>' .
 			     '</div>' .
 			     '<ul class="list-group list-group-flush">';
 
