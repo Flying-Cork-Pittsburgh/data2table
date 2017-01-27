@@ -57,7 +57,7 @@ class D2T_DbHandler {
 				require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 				dbDelta( $sql );
 				if ( ! $wpdb->result ) {
-					$message = __( 'Failed to create table. The SQL Statement was not valid.', $this->d2t );
+					$message = 'Failed to create table. The SQL Statement was not valid.';
 					throw new Exception( $message );
 				}
 				$wpdb->flush();
@@ -65,7 +65,7 @@ class D2T_DbHandler {
 				return $this->check_table_exists( $this->get_table_name_from_sql( $sql ) );
 			}
 		}
-		$message = __( 'Failed to create table. The SQL Statement was not given/valid.', $this->d2t );
+		$message = 'Failed to create table. The SQL Statement was not given.';
 		throw new Exception( $message );
 	}
 
