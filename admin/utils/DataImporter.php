@@ -24,16 +24,63 @@ class D2T_DataImporter {
 	 * The DB Handler is responsible for handling database request and validation.
 	 *
 	 * @since    1.0.0
-	 * @access   protected
+	 * @access   private
 	 * @var      D2T_DbHandler $db handles all database requests and validation
 	 */
-	protected $db;
+	private $db;
 
+	/**
+	 * list of allowed file type for import
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      array $allowed_file_types
+	 */
 	private $allowed_file_types;
+
+	/**
+	 * Maximum file size in BYTES to upload
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      int $max_filesize
+	 */
 	private $max_filesize;
+
+	/**
+	 * path to directory for file upload
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      string $upload_path
+	 */
 	private $upload_path;
+
+	/**
+	 * sets final file name of uploaded files
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      string $fixed_file_name
+	 */
 	private $fixed_file_name;
+
+	/**
+	 * Default setting als delimiter for data import
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      string $delimiter
+	 */
 	private $delimiter;
+
+	/**
+	 * default setting for parsing strings to date
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      string $date_pattern
+	 */
 	private $date_pattern;
 
 	public function __construct( $db ) {
@@ -42,7 +89,7 @@ class D2T_DataImporter {
 			'.csv',
 			'.txt'
 		);    // These will be the types of file that will pass the validation.
-		$this->max_filesize       = 524288;                     // Maximum file size in BYTES (currently 0.5MB).
+		$this->max_filesize       = 524288;
 		$wp_upload_dir            = wp_upload_dir();
 		$this->upload_path        = $wp_upload_dir['basedir'] . '/files/'; // or plugin_dir_path( __FILE__ ) . 'files/';
 		$this->fixed_file_name    = 'data';
@@ -51,7 +98,7 @@ class D2T_DataImporter {
 	}
 
 	/**
-	 * validates and uploads file, returns filepath
+	 * validates and uploads file, returns file path
 	 *
 	 * @since 1.0.0
 	 *
