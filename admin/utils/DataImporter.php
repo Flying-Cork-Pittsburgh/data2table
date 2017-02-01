@@ -193,6 +193,7 @@ class D2T_DataImporter {
 	 * @param string $table_name table name to describe
 	 */
 	public function import_data( $data, $table_name ) {
+		array_shift($data);
 		$this->db->run_data_insert( $table_name, $data );
 	}
 
