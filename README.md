@@ -1,4 +1,4 @@
-# data2table
+![logo D2T-Plugin](https://github.com/anjakammer/data2table/blob/master/d2t_logo.png)
 A Wordpress-Plugin for creating database tables and handling CRUD operations
 
 This Wordpress Plugin provides the service to create database tables, 
