@@ -18,7 +18,7 @@
  *
  * @package    d2t
  * @subpackage d2t/admin
- * @author     Martin Boy & Anja Kammer
+ * @author     Anja Kammer
  */
 class D2T_Admin {
 
@@ -335,6 +335,8 @@ class D2T_Admin {
 			array( 'jquery' ), $this->version, false
 		);
 		// Bootstrap
+		wp_register_script( 'prefix_tether', plugin_dir_url( __FILE__ ) . 'js/tether.min.js' );
+		wp_enqueue_script( 'prefix_tether' );
 		wp_register_script( 'prefix_bootstrap', plugin_dir_url( __FILE__ ) . 'js/bootstrap.min.js' );
 		wp_enqueue_script( 'prefix_bootstrap' );
 	}

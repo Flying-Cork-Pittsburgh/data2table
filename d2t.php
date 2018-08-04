@@ -17,7 +17,7 @@
  * Plugin URI:        https://github.com/anjakammer/data2table/
  * Description:       A Wordpress-Plugin for creating database tables and handling CRUD operations
  * Version:           1.0.0
- * Author:            Martin Boy & Anja Kammer
+ * Author:            Anja Kammer
  * Author URI:        https://github.com/anjakammer/data2table/
  * Text Domain:       d2t
  * Domain Path:       /languages

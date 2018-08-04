@@ -16,7 +16,7 @@
  *
  * @package    d2t
  * @subpackage d2t/admin/utils
- * @author     Martin Boy & Anja Kammer
+ * @author     Anja Kammer
  */
 class D2T_DbHandler {
 
